@@ -42,6 +42,8 @@ class Dashboard extends React.Component {
     this.state = {
       bigChartData: "data1",
       adminAddress : "Click To Load",
+      newAdminAddress:'',
+      etherBalance:'',
 
     };
   }
@@ -51,7 +53,10 @@ class Dashboard extends React.Component {
       bigChartData: name
     });
   };
- 
+ handleChange = (event)=>{
+  this.setState({newAdminAddress: event.target.value});
+
+ };
   setAdminAddress= () =>{
 
     let web3;
@@ -61,6 +66,14 @@ class Dashboard extends React.Component {
         // Set the provider you want from Web3.providers
         web3 = new Web3(new Web3.providers.HttpProvider("http://127.0.0.1:7545"));
       }
+    
+//Let's Get Default Address 
+    var account = web3.eth.accounts[0];
+      if (web3.eth.accounts[0] !== account) {
+        account = web3.eth.accounts[0];
+             }
+    
+
       
     var abi = [
           {
@@ -337,18 +350,327 @@ class Dashboard extends React.Component {
       ];
       
     var myContract = new web3.eth.Contract(abi, '0xD07ABc94E4fC6c9830195284Dbf0754EA7f74993', {
-        from: '0x47aAAAec10349835914182b57D6CB28a6725dEe2', // default from address
+        from: account, // default from address
         gasPrice: '20000000000' // default gas price in wei, 20 gwei in this case
       });
     console.log(myContract);
     myContract.methods.getAdminAddress().call().then(data => admin_address(data));
 
   let admin_address = (data)=>{
+    let balance = web3.eth.getBalance(data);
+        balance.then((bal)=>{
+          this.setState({
+            etherBalance : (bal/1000000000000000000).toString().concat(" ETH"),
+          })
+        })
       this.setState({
-        adminAddress: data.toString()
+        adminAddress: data.toString(),
+        
+
       });
       }
       };
+  handleSetNewAdminAddress=()=>{
+
+    let web3;
+      if (typeof web3 !== 'undefined') {
+        web3 = new Web3(web3.currentProvider);
+      } else {
+        // Set the provider you want from Web3.providers
+        web3 = new Web3(new Web3.providers.HttpProvider("http://127.0.0.1:7545"));
+      }
+    
+//Let's Get Default Address 
+    var account = web3.eth.accounts[0];
+      if (web3.eth.accounts[0] !== account) {
+        account = web3.eth.accounts[0];
+             }
+    
+
+      
+    var abi = [
+          {
+              "constant": false,
+              "inputs": [
+                  {
+                      "name": "_newAdmin",
+                      "type": "address"
+                  }
+              ],
+              "name": "changeAdmin",
+              "outputs": [],
+              "payable": false,
+              "stateMutability": "nonpayable",
+              "type": "function"
+          },
+          {
+              "constant": false,
+              "inputs": [
+                  {
+                      "name": "_account",
+                      "type": "address"
+                  },
+                  {
+                      "name": "_registeredOn",
+                      "type": "string"
+                  },
+                  {
+                      "name": "_expiresOn",
+                      "type": "string"
+                  },
+                  {
+                      "name": "_hwid",
+                      "type": "string"
+                  }
+              ],
+              "name": "giveLicense",
+              "outputs": [],
+              "payable": false,
+              "stateMutability": "nonpayable",
+              "type": "function"
+          },
+          {
+              "constant": false,
+              "inputs": [
+                  {
+                      "name": "_from",
+                      "type": "address"
+                  },
+                  {
+                      "name": "_to",
+                      "type": "address"
+                  },
+                  {
+                      "name": "_license_number",
+                      "type": "uint256"
+                  }
+              ],
+              "name": "transferFrom",
+              "outputs": [],
+              "payable": false,
+              "stateMutability": "nonpayable",
+              "type": "function"
+          },
+          {
+              "inputs": [],
+              "payable": false,
+              "stateMutability": "nonpayable",
+              "type": "constructor"
+          },
+          {
+              "anonymous": false,
+              "inputs": [
+                  {
+                      "indexed": false,
+                      "name": "account",
+                      "type": "address"
+                  },
+                  {
+                      "indexed": false,
+                      "name": "licenseNumber",
+                      "type": "uint256"
+                  }
+              ],
+              "name": "LicenseGiven",
+              "type": "event"
+          },
+          {
+              "anonymous": false,
+              "inputs": [
+                  {
+                      "indexed": false,
+                      "name": "_from",
+                      "type": "address"
+                  },
+                  {
+                      "indexed": false,
+                      "name": "_to",
+                      "type": "address"
+                  },
+                  {
+                      "indexed": false,
+                      "name": "_licenseNumber",
+                      "type": "uint256"
+                  }
+              ],
+              "name": "Transfer",
+              "type": "event"
+          },
+          {
+              "anonymous": false,
+              "inputs": [
+                  {
+                      "indexed": false,
+                      "name": "admin",
+                      "type": "address"
+                  },
+                  {
+                      "indexed": false,
+                      "name": "approved",
+                      "type": "address"
+                  },
+                  {
+                      "indexed": false,
+                      "name": "licenseNumber",
+                      "type": "uint256"
+                  }
+              ],
+              "name": "Approval",
+              "type": "event"
+          },
+          {
+              "constant": true,
+              "inputs": [
+                  {
+                      "name": "_account",
+                      "type": "address"
+                  }
+              ],
+              "name": "balanceOf",
+              "outputs": [
+                  {
+                      "name": "balance",
+                      "type": "uint256"
+                  }
+              ],
+              "payable": false,
+              "stateMutability": "view",
+              "type": "function"
+          },
+          {
+              "constant": true,
+              "inputs": [],
+              "name": "getAdminAddress",
+              "outputs": [
+                  {
+                      "name": "",
+                      "type": "address"
+                  }
+              ],
+              "payable": false,
+              "stateMutability": "view",
+              "type": "function"
+          },
+          {
+              "constant": true,
+              "inputs": [
+                  {
+                      "name": "licenseNumber",
+                      "type": "uint256"
+                  }
+              ],
+              "name": "getLicenseExpiresOnDate",
+              "outputs": [
+                  {
+                      "name": "",
+                      "type": "string"
+                  }
+              ],
+              "payable": false,
+              "stateMutability": "view",
+              "type": "function"
+          },
+          {
+              "constant": true,
+              "inputs": [
+                  {
+                      "name": "licenseNumber",
+                      "type": "uint256"
+                  }
+              ],
+              "name": "getLicenseHardwareId",
+              "outputs": [
+                  {
+                      "name": "",
+                      "type": "string"
+                  }
+              ],
+              "payable": false,
+              "stateMutability": "view",
+              "type": "function"
+          },
+          {
+              "constant": true,
+              "inputs": [
+                  {
+                      "name": "licenseNumber",
+                      "type": "uint256"
+                  }
+              ],
+              "name": "getLicenseRegisteredOnDate",
+              "outputs": [
+                  {
+                      "name": "",
+                      "type": "string"
+                  }
+              ],
+              "payable": false,
+              "stateMutability": "view",
+              "type": "function"
+          },
+          {
+              "constant": true,
+              "inputs": [
+                  {
+                      "name": "",
+                      "type": "uint256"
+                  }
+              ],
+              "name": "licenseNumberToClient",
+              "outputs": [
+                  {
+                      "name": "",
+                      "type": "address"
+                  }
+              ],
+              "payable": false,
+              "stateMutability": "view",
+              "type": "function"
+          },
+          {
+              "constant": true,
+              "inputs": [
+                  {
+                      "name": "_license_number",
+                      "type": "uint256"
+                  }
+              ],
+              "name": "ownerOf",
+              "outputs": [
+                  {
+                      "name": "owner",
+                      "type": "address"
+                  }
+              ],
+              "payable": false,
+              "stateMutability": "view",
+              "type": "function"
+          },
+          {
+              "constant": true,
+              "inputs": [],
+              "name": "totalLicenses",
+              "outputs": [
+                  {
+                      "name": "total",
+                      "type": "uint256"
+                  }
+              ],
+              "payable": false,
+              "stateMutability": "view",
+              "type": "function"
+          }
+      ];
+      
+    var myContract = new web3.eth.Contract(abi, '0xD07ABc94E4fC6c9830195284Dbf0754EA7f74993', {
+        from: account, // default from address
+        gasPrice: '20000000000' // default gas price in wei, 20 gwei in this case
+      });
+    console.log(myContract);
+    let newAddress = this.state.newAdminAddress;
+    let oldAddress = this.state.adminAddress;
+    myContract.methods.changeAdmin(newAddress).send({from : oldAddress});
+  };
   render() {
     return (
       <>
@@ -505,7 +827,7 @@ class Dashboard extends React.Component {
                   <h5 className="card-category">Change AdminEther Address</h5>
                   <CardTitle tag="h3">
                     <i className="tim-icons icon-wallet-43 text-info" />{" "}
-                    Set Ethereum Wallte Balance Here 
+                    {this.state.etherBalance}
                   </CardTitle>
                 </CardHeader>
                 <CardBody>
@@ -515,11 +837,20 @@ class Dashboard extends React.Component {
                           <Input
                             placeholder="Ethereum Address"
                             type="text"
+                            value={this.state.value}
+                            onChange={this.handleChange}
                           />
-                        </FormGroup>
+                          <br></br>
+                          <div className="text-center">
+                          <span className=" badge badge-warning"><strong>Are You Sure You Want To Change Admin ?</strong> <br></br> New Admin Address : {this.state.newAdminAddress}</span>
+                        
+                          </div>
+                          </FormGroup>
                 </CardBody>
                 <CardFooter>
-                  <Button className="btn-fill" color="primary" type="submit">
+                  <Button  className="align-self-center btn-fill" color="primary" type="submit"
+                  onClick={this.handleSetNewAdminAddress}
+                  >
                     Change Address
                   </Button>
                 </CardFooter>
