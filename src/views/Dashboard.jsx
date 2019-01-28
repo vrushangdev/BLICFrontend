@@ -2,35 +2,36 @@ import React from "react";
 // nodejs library that concatenates classes
 import classNames from "classnames";
 // react plugin used to create charts
-import { Line, Bar } from "react-chartjs-2";
+import { Line } from "react-chartjs-2";
+// DropdownToggle,
+// DropdownMenu,
+// DropdownItem,
+// UncontrolledDropdown,
+// Label,
 
 // reactstrap components
 import {
   Button,
   ButtonGroup,
   Card,
+  ListGroupItem,
+  ListGroup,
   CardHeader,
   CardBody,
   CardTitle,
-  DropdownToggle,
-  DropdownMenu,
-  DropdownItem,
-  UncontrolledDropdown,
-  Label,
+  CardFooter,
+ 
   FormGroup,
   Input,
   Table,
   Row,
   Col,
-  UncontrolledTooltip
 } from "reactstrap";
 
 // core components
 import {
   chartExample1,
-  chartExample2,
-  chartExample3,
-  chartExample4
+  
 } from "variables/charts.jsx";
 
 class Dashboard extends React.Component {
@@ -40,6 +41,7 @@ class Dashboard extends React.Component {
       bigChartData: "data1"
     };
   }
+  //Here Goes All Data For Required Component's 
   setBgChartData = name => {
     this.setState({
       bigChartData: name
@@ -55,8 +57,8 @@ class Dashboard extends React.Component {
                 <CardHeader>
                   <Row>
                     <Col className="text-left" sm="6">
-                      <h5 className="card-category">Total Shipments</h5>
-                      <CardTitle tag="h2">Performance</CardTitle>
+                      <h5 className="card-category">Total Licenses Sold</h5>
+                      <CardTitle tag="h2">Licenses Issued</CardTitle>
                     </Col>
                     <Col sm="6">
                       <ButtonGroup
@@ -80,7 +82,7 @@ class Dashboard extends React.Component {
                             type="radio"
                           />
                           <span className="d-none d-sm-block d-md-block d-lg-block d-xl-block">
-                            Accounts
+                            Windows
                           </span>
                           <span className="d-block d-sm-none">
                             <i className="tim-icons icon-single-02" />
@@ -102,7 +104,7 @@ class Dashboard extends React.Component {
                             type="radio"
                           />
                           <span className="d-none d-sm-block d-md-block d-lg-block d-xl-block">
-                            Purchases
+                            MacOs
                           </span>
                           <span className="d-block d-sm-none">
                             <i className="tim-icons icon-gift-2" />
@@ -124,7 +126,7 @@ class Dashboard extends React.Component {
                             type="radio"
                           />
                           <span className="d-none d-sm-block d-md-block d-lg-block d-xl-block">
-                            Sessions
+                            Linux
                           </span>
                           <span className="d-block d-sm-none">
                             <i className="tim-icons icon-tap-02" />
@@ -146,388 +148,292 @@ class Dashboard extends React.Component {
             </Col>
           </Row>
           <Row>
+          <Col xs="12">
+              <Card className="card-chart">
+                <CardHeader>
+                  <h5 className="card-category">Smart Contract Details</h5>
+                  <CardTitle tag="h3">
+                    <i className="tim-icons icon-wallet-43 text-info" />{" "}
+                    <strong >Contract Address : 0xd07abc94e4fc6c9830195284dbf0754ea7f74993</strong>
+                    </CardTitle>
+                </CardHeader>
+                <CardBody>
+                          <table responsive>
+                          <thead className="text-primary">
+                           <th className="badge badge-primary"> Smart Contract Details</th>
+                          </thead>
+                          <hr className="bg-primary"></hr>
+
+                          <tbody  className="text-info">
+                            <tr>
+                              <td>
+                                Name 
+                              </td>
+                              <td>
+                                LicenseToken
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>Owner 
+
+                              </td>
+                              <td>0x47aAAAec10349835914182b57D6CB28a6725dEe2</td>
+                            </tr>
+                            <tr>
+                              <td>Total Licenses </td>
+                              <td>50</td>
+                            </tr>
+                          </tbody>
+
+                          </table>
+                </CardBody> 
+                <CardFooter>
+                  <Button className="btn-fill" color="primary" type="submit">
+                    Change Address
+                  </Button>
+                </CardFooter>
+              </Card>
+            </Col>
+            
+          </Row>
+          <Row>
             <Col lg="4">
               <Card className="card-chart">
                 <CardHeader>
-                  <h5 className="card-category">Total Shipments</h5>
+                  <h5 className="card-category">Change AdminEther Address</h5>
                   <CardTitle tag="h3">
-                    <i className="tim-icons icon-bell-55 text-info" />{" "}
-                    763,215
+                    <i className="tim-icons icon-wallet-43 text-info" />{" "}
+                    Set Ethereum Wallte Balance Here 
                   </CardTitle>
                 </CardHeader>
                 <CardBody>
-                  <div className="chart-area">
-                    <Line
-                      data={chartExample2.data}
-                      options={chartExample2.options}
-                    />
-                  </div>
+                  <strong className="text-white">Current Admin Eth Address Will Come Here
+</strong>
+                  <FormGroup>
+                          <label>New Admin Address Goes Here : </label>
+                          <Input
+                            placeholder="Ethereum Address"
+                            type="text"
+                          />
+                        </FormGroup>
                 </CardBody>
+                <CardFooter>
+                  <Button className="btn-fill" color="primary" type="submit">
+                    Change Address
+                  </Button>
+                </CardFooter>
               </Card>
             </Col>
             <Col lg="4">
-              <Card className="card-chart">
+            <Card className="card-chart">
                 <CardHeader>
-                  <h5 className="card-category">Daily Sales</h5>
+                  <h5 className="card-category">Give License Manually</h5>
                   <CardTitle tag="h3">
-                    <i className="tim-icons icon-delivery-fast text-primary" />{" "}
-                    3,500€
+                    <i className="tim-icons icon-paper text-info" />{" "}
+                    Allocate License
                   </CardTitle>
                 </CardHeader>
                 <CardBody>
-                  <div className="chart-area">
-                    <Bar
-                      data={chartExample3.data}
-                      options={chartExample3.options}
-                    />
-                  </div>
+                  <FormGroup>
+                          <label>Ethereum Address : </label>
+                          <Input
+                            placeholder="Ethereum Address"
+                            type="text"
+                          />
+                          <label>Hardware Id</label>
+                          <Input
+                          placeholder="User Hardware Id"
+                          type="text"
+                          >
+                         </Input>
+                        </FormGroup>
                 </CardBody>
+                <CardFooter>
+                  <Button className="btn-fill" color="primary" type="submit">
+                    Issue License
+                  </Button>
+                </CardFooter>
               </Card>
             </Col>
             <Col lg="4">
-              <Card className="card-chart">
+            <Card className="card-chart">
                 <CardHeader>
-                  <h5 className="card-category">Completed Tasks</h5>
+                  <h5 className="card-category">Search For License Details</h5>
                   <CardTitle tag="h3">
-                    <i className="tim-icons icon-send text-success" /> 12,100K
+                    <i className="tim-icons icon-zoom-split text-info" />{" "}
+                    Get License Details
                   </CardTitle>
                 </CardHeader>
                 <CardBody>
-                  <div className="chart-area">
-                    <Line
-                      data={chartExample4.data}
-                      options={chartExample4.options}
-                    />
-                  </div>
+                  <FormGroup>
+                          <label>Select License Index : </label>
+                          <Input
+                             list="blic"
+                          />
+                          <datalist id="blic">
+                          <option value="1">1</option>
+                          <option value="2">2</option>
+                          <option value="3">3</option>
+                          <option value="4">4</option>
+                          <option value="5">5</option>
+                          <option value="6">6</option>
+                          <option value="7">7</option>
+
+                          </datalist>
+
+                    </FormGroup>
+
+                    <ListGroup flush >
+                      <ListGroupItem className="text-primary">Owned By : //render address here</ListGroupItem>
+                      <ListGroupItem className="text-primary">Registered On : //render registered on date here</ListGroupItem>
+                      <ListGroupItem className="text-primary">Expires On: //render expires on data here</ListGroupItem>
+                    </ListGroup>
+                      
                 </CardBody>
+                <CardFooter>
+                  <Button className="btn-fill" color="primary" type="submit">
+                    Fetch Details
+                  </Button>
+                </CardFooter>
               </Card>
+            
             </Col>
           </Row>
           <Row>
-            <Col lg="6" md="12">
-              <Card className="card-tasks">
+          <Col lg="4">
+            <Card className="card-chart">
                 <CardHeader>
-                  <h6 className="title d-inline">Tasks(5)</h6>
-                  <p className="card-category d-inline"> today</p>
-                  <UncontrolledDropdown>
-                    <DropdownToggle
-                      caret
-                      className="btn-icon"
-                      color="link"
-                      data-toggle="dropdown"
-                      type="button"
-                    >
-                      <i className="tim-icons icon-settings-gear-63" />
-                    </DropdownToggle>
-                    <DropdownMenu aria-labelledby="dropdownMenuLink" right>
-                      <DropdownItem
-                        href="#pablo"
-                        onClick={e => e.preventDefault()}
-                      >
-                        Action
-                      </DropdownItem>
-                      <DropdownItem
-                        href="#pablo"
-                        onClick={e => e.preventDefault()}
-                      >
-                        Another action
-                      </DropdownItem>
-                      <DropdownItem
-                        href="#pablo"
-                        onClick={e => e.preventDefault()}
-                      >
-                        Something else
-                      </DropdownItem>
-                    </DropdownMenu>
-                  </UncontrolledDropdown>
+                  <h5 className="card-category">Transfer License's </h5>
+                  <CardTitle tag="h3">
+                    <i className="tim-icons icon-double-right text-info" />{" "}
+                    Transfer License
+                  </CardTitle>
                 </CardHeader>
                 <CardBody>
-                  <div className="table-full-width table-responsive">
-                    <Table>
-                      <tbody>
-                        <tr>
-                          <td>
-                            <FormGroup check>
-                              <Label check>
-                                <Input defaultValue="" type="checkbox" />
-                                <span className="form-check-sign">
-                                  <span className="check" />
-                                </span>
-                              </Label>
-                            </FormGroup>
-                          </td>
-                          <td>
-                            <p className="title">Update the Documentation</p>
-                            <p className="text-muted">
-                              Dwuamish Head, Seattle, WA 8:47 AM
-                            </p>
-                          </td>
-                          <td className="td-actions text-right">
-                            <Button
-                              color="link"
-                              id="tooltip636901683"
-                              title=""
-                              type="button"
-                            >
-                              <i className="tim-icons icon-pencil" />
-                            </Button>
-                            <UncontrolledTooltip
-                              delay={0}
-                              target="tooltip636901683"
-                              placement="right"
-                            >
-                              Edit Task
-                            </UncontrolledTooltip>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td>
-                            <FormGroup check>
-                              <Label check>
-                                <Input
-                                  defaultChecked
-                                  defaultValue=""
-                                  type="checkbox"
-                                />
-                                <span className="form-check-sign">
-                                  <span className="check" />
-                                </span>
-                              </Label>
-                            </FormGroup>
-                          </td>
-                          <td>
-                            <p className="title">GDPR Compliance</p>
-                            <p className="text-muted">
-                              The GDPR is a regulation that requires businesses
-                              to protect the personal data and privacy of Europe
-                              citizens for transactions that occur within EU
-                              member states.
-                            </p>
-                          </td>
-                          <td className="td-actions text-right">
-                            <Button
-                              color="link"
-                              id="tooltip457194718"
-                              title=""
-                              type="button"
-                            >
-                              <i className="tim-icons icon-pencil" />
-                            </Button>
-                            <UncontrolledTooltip
-                              delay={0}
-                              target="tooltip457194718"
-                              placement="right"
-                            >
-                              Edit Task
-                            </UncontrolledTooltip>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td>
-                            <FormGroup check>
-                              <Label check>
-                                <Input defaultValue="" type="checkbox" />
-                                <span className="form-check-sign">
-                                  <span className="check" />
-                                </span>
-                              </Label>
-                            </FormGroup>
-                          </td>
-                          <td>
-                            <p className="title">Solve the issues</p>
-                            <p className="text-muted">
-                              Fifty percent of all respondents said they would
-                              be more likely to shop at a company
-                            </p>
-                          </td>
-                          <td className="td-actions text-right">
-                            <Button
-                              color="link"
-                              id="tooltip362404923"
-                              title=""
-                              type="button"
-                            >
-                              <i className="tim-icons icon-pencil" />
-                            </Button>
-                            <UncontrolledTooltip
-                              delay={0}
-                              target="tooltip362404923"
-                              placement="right"
-                            >
-                              Edit Task
-                            </UncontrolledTooltip>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td>
-                            <FormGroup check>
-                              <Label check>
-                                <Input defaultValue="" type="checkbox" />
-                                <span className="form-check-sign">
-                                  <span className="check" />
-                                </span>
-                              </Label>
-                            </FormGroup>
-                          </td>
-                          <td>
-                            <p className="title">Release v2.0.0</p>
-                            <p className="text-muted">
-                              Ra Ave SW, Seattle, WA 98116, SUA 11:19 AM
-                            </p>
-                          </td>
-                          <td className="td-actions text-right">
-                            <Button
-                              color="link"
-                              id="tooltip818217463"
-                              title=""
-                              type="button"
-                            >
-                              <i className="tim-icons icon-pencil" />
-                            </Button>
-                            <UncontrolledTooltip
-                              delay={0}
-                              target="tooltip818217463"
-                              placement="right"
-                            >
-                              Edit Task
-                            </UncontrolledTooltip>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td>
-                            <FormGroup check>
-                              <Label check>
-                                <Input defaultValue="" type="checkbox" />
-                                <span className="form-check-sign">
-                                  <span className="check" />
-                                </span>
-                              </Label>
-                            </FormGroup>
-                          </td>
-                          <td>
-                            <p className="title">Export the processed files</p>
-                            <p className="text-muted">
-                              The report also shows that consumers will not
-                              easily forgive a company once a breach exposing
-                              their personal data occurs.
-                            </p>
-                          </td>
-                          <td className="td-actions text-right">
-                            <Button
-                              color="link"
-                              id="tooltip831835125"
-                              title=""
-                              type="button"
-                            >
-                              <i className="tim-icons icon-pencil" />
-                            </Button>
-                            <UncontrolledTooltip
-                              delay={0}
-                              target="tooltip831835125"
-                              placement="right"
-                            >
-                              Edit Task
-                            </UncontrolledTooltip>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td>
-                            <FormGroup check>
-                              <Label check>
-                                <Input defaultValue="" type="checkbox" />
-                                <span className="form-check-sign">
-                                  <span className="check" />
-                                </span>
-                              </Label>
-                            </FormGroup>
-                          </td>
-                          <td>
-                            <p className="title">Arival at export process</p>
-                            <p className="text-muted">
-                              Capitol Hill, Seattle, WA 12:34 AM
-                            </p>
-                          </td>
-                          <td className="td-actions text-right">
-                            <Button
-                              color="link"
-                              id="tooltip217595172"
-                              title=""
-                              type="button"
-                            >
-                              <i className="tim-icons icon-pencil" />
-                            </Button>
-                            <UncontrolledTooltip
-                              delay={0}
-                              target="tooltip217595172"
-                              placement="right"
-                            >
-                              Edit Task
-                            </UncontrolledTooltip>
-                          </td>
-                        </tr>
-                      </tbody>
-                    </Table>
-                  </div>
+                  <FormGroup>
+                          <label>Select License Number : </label>
+                          <Input
+                             list="blic"
+                          />
+                          <datalist id="blic">
+                          <option value="1">1</option>
+                          <option value="2">2</option>
+                          <option value="3">3</option>
+                          <option value="4">4</option>
+                          <option value="5">5</option>
+                          <option value="6">6</option>
+                          <option value="7">7</option>
+
+                          </datalist>
+                          <label>Transfer From : </label>
+                          <Input
+                            placeholder="Ethereum Address"
+                            type="text"
+                          />
+                        <label>Transfer To : </label>
+                          <Input
+                            placeholder="Ethereum Address"
+                            type="text"
+                          />
+                    </FormGroup>
+
+                    
+                      
                 </CardBody>
+                <CardFooter>
+                  <Button className="btn-fill" color="primary" type="submit">
+                  Make Transfer
+                  </Button>
+                </CardFooter>
               </Card>
+            
             </Col>
-            <Col lg="6" md="12">
+          </Row>
+          <Row>
+            <Col lg="12" md="12">
               <Card>
                 <CardHeader>
-                  <CardTitle tag="h4">Simple Table</CardTitle>
+                  <CardTitle tag="h4">Transaction Detail's </CardTitle>
                 </CardHeader>
                 <CardBody>
                   <Table className="tablesorter" responsive>
                     <thead className="text-primary">
                       <tr>
-                        <th>Name</th>
-                        <th>Country</th>
-                        <th>City</th>
-                        <th className="text-center">Salary</th>
+                        <th>Ethereum Address</th>
+                        <th>Transactino Hash</th>
+                        <th>Software Sold</th>
+                        <th className="text-center">License Type</th>
+                        <th>Status</th>
                       </tr>
                     </thead>
                     <tbody>
                       <tr>
-                        <td>Dakota Rice</td>
-                        <td>Niger</td>
-                        <td>Oud-Turnhout</td>
-                        <td className="text-center">$36,738</td>
+                        <td>0x47aAAAec10349835914182b57D6CB28a6725dEe2</td>
+                        <td>0x3386137958829890bf5d0ad8351e2a2fec85648ab35a4debecdb678fe47ad51a</td>
+                        <td>Photoshop</td>
+                        <td>Windows</td>
+                        <td>
+                        <Button className="btn-icon" color="success" size="sm">
+                    <i className="fa fa-check"></i>
+                </Button>{` `}
+                        </td>
+
                       </tr>
                       <tr>
-                        <td>Minerva Hooper</td>
-                        <td>Curaçao</td>
-                        <td>Sinaai-Waas</td>
-                        <td className="text-center">$23,789</td>
+                        <td><a href="https://etherscan.io/address/0x47aAAAec10349835914182b57D6CB28a6725dEe2">0x47aAAAec10349835914182b57D6CB28a6725dEe2</a></td>
+                        <td><a href="https://etherscan.io/tx/0x3386137958829890bf5d0ad8351e2a2fec85648ab35a4debecdb678fe47ad51a">0x3386137958829890bf5d0ad8351e2a2fec85648ab35a4debecdb678fe47ad51a</a></td>
+                        <td>Auto Cad</td>
+                        <td className="text-center">Mac</td>
+                        <td>
+                        <Button className="btn-icon" color="success" size="sm">
+                    <i className="fa fa-check"></i>
+                </Button>{` `}
+                        </td>
                       </tr>
                       <tr>
-                        <td>Sage Rodriguez</td>
-                        <td>Netherlands</td>
-                        <td>Baileux</td>
-                        <td className="text-center">$56,142</td>
+                        <td>0x47aAAAec10349835914182b57D6CB28a6725dEe2</td>
+                        <td>0x3386137958829890bf5d0ad8351e2a2fec85648ab35a4debecdb678fe47ad51a</td>
+                        <td>Android Studio</td>
+                        <td className="text-center">Linux</td>
+                        <td>
+                        <Button className="btn-icon" color="warning" size="sm">
+                    <i className="fa fa-spinner"></i>
+                </Button>{` `}
+                        </td>
+                      </tr>
+
+                      <tr>
+                        <td>0x47aAAAec10349835914182b57D6CB28a6725dEe2</td>
+                        <td>0x3386137958829890bf5d0ad8351e2a2fec85648ab35a4debecdb678fe47ad51a</td>
+                        <td>Photoshop</td>
+                        <td className="text-center">Windows</td>
+                        <td>
+                        <Button className="btn-icon" color="success" size="sm">
+                    <i className="fa fa-check"></i>
+                </Button>{` `}
+                        </td>
                       </tr>
                       <tr>
-                        <td>Philip Chaney</td>
-                        <td>Korea, South</td>
-                        <td>Overland Park</td>
-                        <td className="text-center">$38,735</td>
+                        <td>0x47aAAAec10349835914182b57D6CB28a6725dEe2</td>
+                        <td>0x3386137958829890bf5d0ad8351e2a2fec85648ab35a4debecdb678fe47ad51a</td>
+                        <td>Auto Cad</td>
+                        <td className="text-center">Mac</td>
+                        <td>
+                        <Button className="btn-icon" color="success" size="sm">
+                    <i className="fa fa-check"></i>
+                </Button>{` `}
+                        </td>
                       </tr>
                       <tr>
-                        <td>Doris Greene</td>
-                        <td>Malawi</td>
-                        <td>Feldkirchen in Kärnten</td>
-                        <td className="text-center">$63,542</td>
-                      </tr>
-                      <tr>
-                        <td>Mason Porter</td>
-                        <td>Chile</td>
-                        <td>Gloucester</td>
-                        <td className="text-center">$78,615</td>
-                      </tr>
-                      <tr>
-                        <td>Jon Porter</td>
-                        <td>Portugal</td>
-                        <td>Gloucester</td>
-                        <td className="text-center">$98,615</td>
+                        <td>0x47aAAAec10349835914182b57D6CB28a6725dEe2</td>
+                        <td>0x3386137958829890bf5d0ad8351e2a2fec85648ab35a4debecdb678fe47ad51a</td>
+                        <td>Android Studio</td>
+                        <td className="text-center">Linux</td>
+                        <td>
+                        <Button className="btn-icon" color="warning" size="sm">
+                    <i className="fa fa-spinner"></i>
+                </Button>{` `}
+                        </td>
                       </tr>
                     </tbody>
                   </Table>

@@ -181,9 +181,6 @@ class AdminNavbar extends React.Component {
                     <NavLink tag="li">
                       <DropdownItem className="nav-item">Profile</DropdownItem>
                     </NavLink>
-                    <NavLink tag="li">
-                      <DropdownItem className="nav-item">Settings</DropdownItem>
-                    </NavLink>
                     <DropdownItem divider tag="li" />
                     <NavLink tag="li">
                       <DropdownItem className="nav-item">Log out</DropdownItem>
