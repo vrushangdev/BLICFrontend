@@ -4,6 +4,8 @@ import classNames from "classnames";
 // react plugin used to create charts
 import { Line } from "react-chartjs-2";
 import Web3 from 'web3';
+import LicenseToken from '../backend/build/contracts/LicenseToken.json';
+
 
 // DropdownToggle,
 // DropdownMenu,
@@ -22,7 +24,7 @@ import {
   CardBody,
   CardTitle,
   CardFooter,
- 
+ Badge,
   FormGroup,
   Input,
   Table,
@@ -37,16 +39,377 @@ import {
 } from "variables/charts.jsx";
 
 class Dashboard extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      bigChartData: "data1",
-      adminAddress : "Click To Load",
-      newAdminAddress:'',
-      etherBalance:'',
+  state = { 
+    bigChartData: "data1",adminAddress : null,newAdminAddress:null,
+  etherBalance:null, web3: null, contract: null,
+  hardwareid : null,
+  clientAddress :null,
+  contractAddress:null,
+  block:null,
+  number:null,
+  hash:null,
+  time:null,
+  gas:null,
 
-    };
+ };
+
+  
+  componentDidMount = async()=>
+  {
+    let web3;
+    if (typeof web3 !== 'undefined') {
+      web3 = await new Web3(web3.currentProvider);
+      this.setState({web3});
+    } else {
+      // Set the provider you want from Web3.providers
+      web3 = await new Web3(new Web3.providers.HttpProvider("http://127.0.0.1:7545"));
+      this.setState({web3});
+    }
+  
+//Let's Get Default Address 
+  var account = web3.eth.accounts[0];
+    if (web3.eth.accounts[0] !== account) {
+      account = web3.eth.accounts[0];
+           }
+  var abi = [
+        {
+            "constant": false,
+            "inputs": [
+                {
+                    "name": "_newAdmin",
+                    "type": "address"
+                }
+            ],
+            "name": "changeAdmin",
+            "outputs": [],
+            "payable": false,
+            "stateMutability": "nonpayable",
+            "type": "function"
+        },
+        {
+            "constant": false,
+            "inputs": [
+                {
+                    "name": "_account",
+                    "type": "address"
+                },
+                {
+                    "name": "_registeredOn",
+                    "type": "string"
+                },
+                {
+                    "name": "_expiresOn",
+                    "type": "string"
+                },
+                {
+                    "name": "_hwid",
+                    "type": "string"
+                }
+            ],
+            "name": "giveLicense",
+            "outputs": [],
+            "payable": false,
+            "stateMutability": "nonpayable",
+            "type": "function"
+        },
+        {
+            "constant": false,
+            "inputs": [
+                {
+                    "name": "_from",
+                    "type": "address"
+                },
+                {
+                    "name": "_to",
+                    "type": "address"
+                },
+                {
+                    "name": "_license_number",
+                    "type": "uint256"
+                }
+            ],
+            "name": "transferFrom",
+            "outputs": [],
+            "payable": false,
+            "stateMutability": "nonpayable",
+            "type": "function"
+        },
+        {
+            "inputs": [],
+            "payable": false,
+            "stateMutability": "nonpayable",
+            "type": "constructor"
+        },
+        {
+            "anonymous": false,
+            "inputs": [
+                {
+                    "indexed": false,
+                    "name": "account",
+                    "type": "address"
+                },
+                {
+                    "indexed": false,
+                    "name": "licenseNumber",
+                    "type": "uint256"
+                }
+            ],
+            "name": "LicenseGiven",
+            "type": "event"
+        },
+        {
+            "anonymous": false,
+            "inputs": [
+                {
+                    "indexed": false,
+                    "name": "_from",
+                    "type": "address"
+                },
+                {
+                    "indexed": false,
+                    "name": "_to",
+                    "type": "address"
+                },
+                {
+                    "indexed": false,
+                    "name": "_licenseNumber",
+                    "type": "uint256"
+                }
+            ],
+            "name": "Transfer",
+            "type": "event"
+        },
+        {
+            "anonymous": false,
+            "inputs": [
+                {
+                    "indexed": false,
+                    "name": "admin",
+                    "type": "address"
+                },
+                {
+                    "indexed": false,
+                    "name": "approved",
+                    "type": "address"
+                },
+                {
+                    "indexed": false,
+                    "name": "licenseNumber",
+                    "type": "uint256"
+                }
+            ],
+            "name": "Approval",
+            "type": "event"
+        },
+        {
+            "constant": true,
+            "inputs": [
+                {
+                    "name": "_account",
+                    "type": "address"
+                }
+            ],
+            "name": "balanceOf",
+            "outputs": [
+                {
+                    "name": "balance",
+                    "type": "uint256"
+                }
+            ],
+            "payable": false,
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "constant": true,
+            "inputs": [],
+            "name": "getAdminAddress",
+            "outputs": [
+                {
+                    "name": "",
+                    "type": "address"
+                }
+            ],
+            "payable": false,
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "constant": true,
+            "inputs": [
+                {
+                    "name": "licenseNumber",
+                    "type": "uint256"
+                }
+            ],
+            "name": "getLicenseExpiresOnDate",
+            "outputs": [
+                {
+                    "name": "",
+                    "type": "string"
+                }
+            ],
+            "payable": false,
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "constant": true,
+            "inputs": [
+                {
+                    "name": "licenseNumber",
+                    "type": "uint256"
+                }
+            ],
+            "name": "getLicenseHardwareId",
+            "outputs": [
+                {
+                    "name": "",
+                    "type": "string"
+                }
+            ],
+            "payable": false,
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "constant": true,
+            "inputs": [
+                {
+                    "name": "licenseNumber",
+                    "type": "uint256"
+                }
+            ],
+            "name": "getLicenseRegisteredOnDate",
+            "outputs": [
+                {
+                    "name": "",
+                    "type": "string"
+                }
+            ],
+            "payable": false,
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "constant": true,
+            "inputs": [
+                {
+                    "name": "",
+                    "type": "uint256"
+                }
+            ],
+            "name": "licenseNumberToClient",
+            "outputs": [
+                {
+                    "name": "",
+                    "type": "address"
+                }
+            ],
+            "payable": false,
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "constant": true,
+            "inputs": [
+                {
+                    "name": "_license_number",
+                    "type": "uint256"
+                }
+            ],
+            "name": "ownerOf",
+            "outputs": [
+                {
+                    "name": "owner",
+                    "type": "address"
+                }
+            ],
+            "payable": false,
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "constant": true,
+            "inputs": [],
+            "name": "totalLicenses",
+            "outputs": [
+                {
+                    "name": "total",
+                    "type": "uint256"
+                }
+            ],
+            "payable": false,
+            "stateMutability": "view",
+            "type": "function"
+        }
+    ];
+    
+  var myContract =await  new web3.eth.Contract(abi, '0xD07ABc94E4fC6c9830195284Dbf0754EA7f74993', {
+      from: account, // default from address
+      gasPrice: '20000000000' // default gas price in wei, 20 gwei in this case
+    });
+  console.log(myContract);
+  this.setState({contract : myContract});
+ // resolve(myContract);
+  let utils = this.state.web3.utils;
+  let address = await this.state.contract.methods.getAdminAddress().call();
+  let balance = await this.state.web3.eth.getBalance(address);
+  balance = utils.fromWei(balance, 'ether').toString().concat(" ETH");
+  let contractAddress =  this.state.contract.address;
+
+  this.setState({adminAddress: address,etherBalance:balance,contractAddress});
+  var latestBlock = await this.state.web3.eth.getBlockNumber();
+  console.log(latestBlock);
+  var block = await this.state.web3.eth.getBlock(latestBlock);
+  var hash = await block.hash.toString();
+  var time = await block.timestamp;
+  console.log(hash);
+    this.setState({block:latestBlock,hash:hash,time:this.convertTimestamp(time)});
+  return myContract;
+  
+
+
+};
+
+constructor(props) {
+  super(props);
+  console.log(LicenseToken.abi);
+  
+
+}
+
+
+
+ convertTimestamp=(time) =>{
+  var d = new Date(time * 1000), // Convert the passed timestamp to milliseconds
+      yyyy = d.getFullYear(),
+      mm = ('0' + (d.getMonth() + 1)).slice(-2),  // Months are zero based. Add leading 0.
+      dd = ('0' + d.getDate()).slice(-2),         // Add leading 0.
+      hh = d.getHours(),
+      h = hh,
+      min = ('0' + d.getMinutes()).slice(-2),     // Add leading 0.
+      ampm = 'AM',
+      time;
+if (hh > 12) {
+      h = hh - 12;
+      ampm = 'PM';
+  } else if (hh === 12) {
+      h = 12;
+      ampm = 'PM';
+  } else if (hh == 0) {
+      h = 12;
   }
+// ie: 2014-03-24, 3:00 PM
+  var time1 = yyyy + '-' + mm + '-' + dd + ', ' + h + ':' + min + ' ' + ampm;
+  return time1;
+};
+
+
+
+
+
+
   //Here Goes All Data For Required Component's 
   setBgChartData = name => {
     this.setState({
@@ -57,622 +420,51 @@ class Dashboard extends React.Component {
   this.setState({newAdminAddress: event.target.value});
 
  };
-  setAdminAddress= () =>{
 
-    let web3;
-      if (typeof web3 !== 'undefined') {
-        web3 = new Web3(web3.currentProvider);
-      } else {
-        // Set the provider you want from Web3.providers
-        web3 = new Web3(new Web3.providers.HttpProvider("http://127.0.0.1:7545"));
-      }
-    
-//Let's Get Default Address 
-    var account = web3.eth.accounts[0];
-      if (web3.eth.accounts[0] !== account) {
-        account = web3.eth.accounts[0];
-             }
-    
+ handleHardwareId = (event)=>{
+  this.setState({hardwareid: event.target.value});
 
-      
-    var abi = [
-          {
-              "constant": false,
-              "inputs": [
-                  {
-                      "name": "_newAdmin",
-                      "type": "address"
-                  }
-              ],
-              "name": "changeAdmin",
-              "outputs": [],
-              "payable": false,
-              "stateMutability": "nonpayable",
-              "type": "function"
-          },
-          {
-              "constant": false,
-              "inputs": [
-                  {
-                      "name": "_account",
-                      "type": "address"
-                  },
-                  {
-                      "name": "_registeredOn",
-                      "type": "string"
-                  },
-                  {
-                      "name": "_expiresOn",
-                      "type": "string"
-                  },
-                  {
-                      "name": "_hwid",
-                      "type": "string"
-                  }
-              ],
-              "name": "giveLicense",
-              "outputs": [],
-              "payable": false,
-              "stateMutability": "nonpayable",
-              "type": "function"
-          },
-          {
-              "constant": false,
-              "inputs": [
-                  {
-                      "name": "_from",
-                      "type": "address"
-                  },
-                  {
-                      "name": "_to",
-                      "type": "address"
-                  },
-                  {
-                      "name": "_license_number",
-                      "type": "uint256"
-                  }
-              ],
-              "name": "transferFrom",
-              "outputs": [],
-              "payable": false,
-              "stateMutability": "nonpayable",
-              "type": "function"
-          },
-          {
-              "inputs": [],
-              "payable": false,
-              "stateMutability": "nonpayable",
-              "type": "constructor"
-          },
-          {
-              "anonymous": false,
-              "inputs": [
-                  {
-                      "indexed": false,
-                      "name": "account",
-                      "type": "address"
-                  },
-                  {
-                      "indexed": false,
-                      "name": "licenseNumber",
-                      "type": "uint256"
-                  }
-              ],
-              "name": "LicenseGiven",
-              "type": "event"
-          },
-          {
-              "anonymous": false,
-              "inputs": [
-                  {
-                      "indexed": false,
-                      "name": "_from",
-                      "type": "address"
-                  },
-                  {
-                      "indexed": false,
-                      "name": "_to",
-                      "type": "address"
-                  },
-                  {
-                      "indexed": false,
-                      "name": "_licenseNumber",
-                      "type": "uint256"
-                  }
-              ],
-              "name": "Transfer",
-              "type": "event"
-          },
-          {
-              "anonymous": false,
-              "inputs": [
-                  {
-                      "indexed": false,
-                      "name": "admin",
-                      "type": "address"
-                  },
-                  {
-                      "indexed": false,
-                      "name": "approved",
-                      "type": "address"
-                  },
-                  {
-                      "indexed": false,
-                      "name": "licenseNumber",
-                      "type": "uint256"
-                  }
-              ],
-              "name": "Approval",
-              "type": "event"
-          },
-          {
-              "constant": true,
-              "inputs": [
-                  {
-                      "name": "_account",
-                      "type": "address"
-                  }
-              ],
-              "name": "balanceOf",
-              "outputs": [
-                  {
-                      "name": "balance",
-                      "type": "uint256"
-                  }
-              ],
-              "payable": false,
-              "stateMutability": "view",
-              "type": "function"
-          },
-          {
-              "constant": true,
-              "inputs": [],
-              "name": "getAdminAddress",
-              "outputs": [
-                  {
-                      "name": "",
-                      "type": "address"
-                  }
-              ],
-              "payable": false,
-              "stateMutability": "view",
-              "type": "function"
-          },
-          {
-              "constant": true,
-              "inputs": [
-                  {
-                      "name": "licenseNumber",
-                      "type": "uint256"
-                  }
-              ],
-              "name": "getLicenseExpiresOnDate",
-              "outputs": [
-                  {
-                      "name": "",
-                      "type": "string"
-                  }
-              ],
-              "payable": false,
-              "stateMutability": "view",
-              "type": "function"
-          },
-          {
-              "constant": true,
-              "inputs": [
-                  {
-                      "name": "licenseNumber",
-                      "type": "uint256"
-                  }
-              ],
-              "name": "getLicenseHardwareId",
-              "outputs": [
-                  {
-                      "name": "",
-                      "type": "string"
-                  }
-              ],
-              "payable": false,
-              "stateMutability": "view",
-              "type": "function"
-          },
-          {
-              "constant": true,
-              "inputs": [
-                  {
-                      "name": "licenseNumber",
-                      "type": "uint256"
-                  }
-              ],
-              "name": "getLicenseRegisteredOnDate",
-              "outputs": [
-                  {
-                      "name": "",
-                      "type": "string"
-                  }
-              ],
-              "payable": false,
-              "stateMutability": "view",
-              "type": "function"
-          },
-          {
-              "constant": true,
-              "inputs": [
-                  {
-                      "name": "",
-                      "type": "uint256"
-                  }
-              ],
-              "name": "licenseNumberToClient",
-              "outputs": [
-                  {
-                      "name": "",
-                      "type": "address"
-                  }
-              ],
-              "payable": false,
-              "stateMutability": "view",
-              "type": "function"
-          },
-          {
-              "constant": true,
-              "inputs": [
-                  {
-                      "name": "_license_number",
-                      "type": "uint256"
-                  }
-              ],
-              "name": "ownerOf",
-              "outputs": [
-                  {
-                      "name": "owner",
-                      "type": "address"
-                  }
-              ],
-              "payable": false,
-              "stateMutability": "view",
-              "type": "function"
-          },
-          {
-              "constant": true,
-              "inputs": [],
-              "name": "totalLicenses",
-              "outputs": [
-                  {
-                      "name": "total",
-                      "type": "uint256"
-                  }
-              ],
-              "payable": false,
-              "stateMutability": "view",
-              "type": "function"
-          }
-      ];
-      
-    var myContract = new web3.eth.Contract(abi, '0xD07ABc94E4fC6c9830195284Dbf0754EA7f74993', {
-        from: account, // default from address
-        gasPrice: '20000000000' // default gas price in wei, 20 gwei in this case
-      });
-    console.log(myContract);
-    myContract.methods.getAdminAddress().call().then(data => admin_address(data));
+ };
+ handleClientAddress = (event)=>{
+  let utils = this.state.web3.utils;
+  if(utils.isAddress(event.target.value)){
+  this.setState({clientAddress: event.target.value});
+  }
+  else{
+    this.setState({clientAddress: "Invalid Address !"});
 
-  let admin_address = (data)=>{
-    let balance = web3.eth.getBalance(data);
-        balance.then((bal)=>{
-          this.setState({
-            etherBalance : (bal/1000000000000000000).toString().concat(" ETH"),
-          })
-        })
-      this.setState({
-        adminAddress: data.toString(),
-        
+  }
 
-      });
-      }
-      };
-  handleSetNewAdminAddress=()=>{
+ };
 
-    let web3;
-      if (typeof web3 !== 'undefined') {
-        web3 = new Web3(web3.currentProvider);
-      } else {
-        // Set the provider you want from Web3.providers
-        web3 = new Web3(new Web3.providers.HttpProvider("http://127.0.0.1:7545"));
-      }
-    
-//Let's Get Default Address 
-    var account = web3.eth.accounts[0];
-      if (web3.eth.accounts[0] !== account) {
-        account = web3.eth.accounts[0];
-             }
-    
 
-      
-    var abi = [
-          {
-              "constant": false,
-              "inputs": [
-                  {
-                      "name": "_newAdmin",
-                      "type": "address"
-                  }
-              ],
-              "name": "changeAdmin",
-              "outputs": [],
-              "payable": false,
-              "stateMutability": "nonpayable",
-              "type": "function"
-          },
-          {
-              "constant": false,
-              "inputs": [
-                  {
-                      "name": "_account",
-                      "type": "address"
-                  },
-                  {
-                      "name": "_registeredOn",
-                      "type": "string"
-                  },
-                  {
-                      "name": "_expiresOn",
-                      "type": "string"
-                  },
-                  {
-                      "name": "_hwid",
-                      "type": "string"
-                  }
-              ],
-              "name": "giveLicense",
-              "outputs": [],
-              "payable": false,
-              "stateMutability": "nonpayable",
-              "type": "function"
-          },
-          {
-              "constant": false,
-              "inputs": [
-                  {
-                      "name": "_from",
-                      "type": "address"
-                  },
-                  {
-                      "name": "_to",
-                      "type": "address"
-                  },
-                  {
-                      "name": "_license_number",
-                      "type": "uint256"
-                  }
-              ],
-              "name": "transferFrom",
-              "outputs": [],
-              "payable": false,
-              "stateMutability": "nonpayable",
-              "type": "function"
-          },
-          {
-              "inputs": [],
-              "payable": false,
-              "stateMutability": "nonpayable",
-              "type": "constructor"
-          },
-          {
-              "anonymous": false,
-              "inputs": [
-                  {
-                      "indexed": false,
-                      "name": "account",
-                      "type": "address"
-                  },
-                  {
-                      "indexed": false,
-                      "name": "licenseNumber",
-                      "type": "uint256"
-                  }
-              ],
-              "name": "LicenseGiven",
-              "type": "event"
-          },
-          {
-              "anonymous": false,
-              "inputs": [
-                  {
-                      "indexed": false,
-                      "name": "_from",
-                      "type": "address"
-                  },
-                  {
-                      "indexed": false,
-                      "name": "_to",
-                      "type": "address"
-                  },
-                  {
-                      "indexed": false,
-                      "name": "_licenseNumber",
-                      "type": "uint256"
-                  }
-              ],
-              "name": "Transfer",
-              "type": "event"
-          },
-          {
-              "anonymous": false,
-              "inputs": [
-                  {
-                      "indexed": false,
-                      "name": "admin",
-                      "type": "address"
-                  },
-                  {
-                      "indexed": false,
-                      "name": "approved",
-                      "type": "address"
-                  },
-                  {
-                      "indexed": false,
-                      "name": "licenseNumber",
-                      "type": "uint256"
-                  }
-              ],
-              "name": "Approval",
-              "type": "event"
-          },
-          {
-              "constant": true,
-              "inputs": [
-                  {
-                      "name": "_account",
-                      "type": "address"
-                  }
-              ],
-              "name": "balanceOf",
-              "outputs": [
-                  {
-                      "name": "balance",
-                      "type": "uint256"
-                  }
-              ],
-              "payable": false,
-              "stateMutability": "view",
-              "type": "function"
-          },
-          {
-              "constant": true,
-              "inputs": [],
-              "name": "getAdminAddress",
-              "outputs": [
-                  {
-                      "name": "",
-                      "type": "address"
-                  }
-              ],
-              "payable": false,
-              "stateMutability": "view",
-              "type": "function"
-          },
-          {
-              "constant": true,
-              "inputs": [
-                  {
-                      "name": "licenseNumber",
-                      "type": "uint256"
-                  }
-              ],
-              "name": "getLicenseExpiresOnDate",
-              "outputs": [
-                  {
-                      "name": "",
-                      "type": "string"
-                  }
-              ],
-              "payable": false,
-              "stateMutability": "view",
-              "type": "function"
-          },
-          {
-              "constant": true,
-              "inputs": [
-                  {
-                      "name": "licenseNumber",
-                      "type": "uint256"
-                  }
-              ],
-              "name": "getLicenseHardwareId",
-              "outputs": [
-                  {
-                      "name": "",
-                      "type": "string"
-                  }
-              ],
-              "payable": false,
-              "stateMutability": "view",
-              "type": "function"
-          },
-          {
-              "constant": true,
-              "inputs": [
-                  {
-                      "name": "licenseNumber",
-                      "type": "uint256"
-                  }
-              ],
-              "name": "getLicenseRegisteredOnDate",
-              "outputs": [
-                  {
-                      "name": "",
-                      "type": "string"
-                  }
-              ],
-              "payable": false,
-              "stateMutability": "view",
-              "type": "function"
-          },
-          {
-              "constant": true,
-              "inputs": [
-                  {
-                      "name": "",
-                      "type": "uint256"
-                  }
-              ],
-              "name": "licenseNumberToClient",
-              "outputs": [
-                  {
-                      "name": "",
-                      "type": "address"
-                  }
-              ],
-              "payable": false,
-              "stateMutability": "view",
-              "type": "function"
-          },
-          {
-              "constant": true,
-              "inputs": [
-                  {
-                      "name": "_license_number",
-                      "type": "uint256"
-                  }
-              ],
-              "name": "ownerOf",
-              "outputs": [
-                  {
-                      "name": "owner",
-                      "type": "address"
-                  }
-              ],
-              "payable": false,
-              "stateMutability": "view",
-              "type": "function"
-          },
-          {
-              "constant": true,
-              "inputs": [],
-              "name": "totalLicenses",
-              "outputs": [
-                  {
-                      "name": "total",
-                      "type": "uint256"
-                  }
-              ],
-              "payable": false,
-              "stateMutability": "view",
-              "type": "function"
-          }
-      ];
-      
-    var myContract = new web3.eth.Contract(abi, '0xD07ABc94E4fC6c9830195284Dbf0754EA7f74993', {
-        from: account, // default from address
-        gasPrice: '20000000000' // default gas price in wei, 20 gwei in this case
-      });
-    console.log(myContract);
+
+
+
+
+
+
+  setAdminAddress= async () =>{
+            let utils = this.state.web3.utils;
+            let address = await this.state.contract.methods.getAdminAddress().call();
+            let balance = await this.state.web3.eth.getBalance(address);
+
+            balance = utils.fromWei(balance, 'ether').toString().concat(" ETH");
+            this.setState({adminAddress: address,etherBalance:balance});
+          };
+  handleSetNewAdminAddress=async()=>{
+    let contract = this.state.contract;
     let newAddress = this.state.newAdminAddress;
     let oldAddress = this.state.adminAddress;
-    myContract.methods.changeAdmin(newAddress).send({from : oldAddress});
+
+    await contract.methods.changeAdmin(newAddress).send({from : oldAddress});
+    this.setAdminAddress();
   };
   render() {
+    
+
     return (
+
       <>
         <div className="content">
           <Row>
@@ -778,7 +570,7 @@ class Dashboard extends React.Component {
                   <h5 className="card-category">Smart Contract Details</h5>
                   <CardTitle tag="h3">
                     <i className="tim-icons icon-wallet-43 text-info" />{" "}
-                    <strong >Contract Address : 0xd07abc94e4fc6c9830195284dbf0754ea7f74993</strong>
+                    <h2 >Contract Address : {this.state.contractAddress}</h2>
                     </CardTitle>
                 </CardHeader>
                 <CardBody>
@@ -830,8 +622,8 @@ class Dashboard extends React.Component {
           </Row>
           <Row>
             <Col lg="4">
-              <Card className="card-chart" onClick={()=>{this.setAdminAddress()}}>
-                <CardHeader>
+              <Card className="card-chart" >
+                <CardHeader onPageShow={()=>{this.setAdminAddress()}}>
                   <h5 className="card-category">Change AdminEther Address</h5>
                   <CardTitle tag="h3">
                     <i className="tim-icons icon-wallet-43 text-info" />{" "}
@@ -875,18 +667,25 @@ class Dashboard extends React.Component {
                 </CardHeader>
                 <CardBody>
                   <FormGroup>
-                          <label>Ethereum Address : </label>
+                          <label>Ethereum Address : {this.state.clientAddress}</label>
                           <Input
                             placeholder="Ethereum Address"
                             type="text"
+                            value={this.state.value}
+                            onChange={this.handleClientAddress}
                           />
-                          <label>Hardware Id</label>
+                          <label>Hardware Id:{this.state.hardwareid} </label>
                           <Input
                           placeholder="User Hardware Id"
                           type="text"
+                          value={this.state.value}
+                          onChange={this.handleHardwareId}
+                         
                           >
                          </Input>
                         </FormGroup>
+                       
+
                 </CardBody>
                 <CardFooter>
                   <Button className="btn-fill" color="primary" type="submit">
@@ -999,18 +798,20 @@ class Dashboard extends React.Component {
                   <Table className="tablesorter" responsive>
                     <thead className="text-primary">
                       <tr>
-                        <th>Ethereum Address</th>
+                        <th>Block Number</th>
                         <th>Transactino Hash</th>
-                        <th>Software Sold</th>
+                        <th>Time</th>
                         <th className="text-center">License Type</th>
                         <th>Status</th>
                       </tr>
                     </thead>
                     <tbody>
                       <tr>
-                        <td>0x47aAAAec10349835914182b57D6CB28a6725dEe2</td>
-                        <td>0x3386137958829890bf5d0ad8351e2a2fec85648ab35a4debecdb678fe47ad51a</td>
-                        <td>Photoshop</td>
+                        <td className="text-center">{this.state.block}</td>
+                        <td>
+                          <a className="primary" href={"https://etherscan.io/".concat(this.state.hash)}>{this.state.hash}</a>
+                        </td>
+                        <td>{this.state.time}</td>
                         <td>Windows</td>
                         <td>
                         <Button className="btn-icon" color="success" size="sm">
