@@ -782,11 +782,19 @@ class Dashboard extends React.Component {
                     </CardTitle>
                 </CardHeader>
                 <CardBody>
-                          <table responsive>
+                          <table responsive="true">
                           <thead className="text-primary">
+                           <tr>
                            <th className="badge badge-primary"> Smart Contract Details</th>
-                          </thead>
-                          <hr className="bg-primary"></hr>
+                          
+                           </tr>
+                           <tr>
+                            <td>
+                            <hr className="bg-primary"></hr>
+
+                            </td>
+                           </tr>
+                           </thead>
 
                           <tbody  className="text-info">
                             <tr>
