@@ -50,6 +50,10 @@ class Dashboard extends React.Component {
   hash:null,
   time:null,
   gas:null,
+  queriedLicense:0,
+  OwnedBy:null,
+  registeredOn:null,
+  expiresOn:null,
 
  };
 
@@ -71,281 +75,9 @@ class Dashboard extends React.Component {
     if (web3.eth.accounts[0] !== account) {
       account = web3.eth.accounts[0];
            }
-  var abi = [
-        {
-            "constant": false,
-            "inputs": [
-                {
-                    "name": "_newAdmin",
-                    "type": "address"
-                }
-            ],
-            "name": "changeAdmin",
-            "outputs": [],
-            "payable": false,
-            "stateMutability": "nonpayable",
-            "type": "function"
-        },
-        {
-            "constant": false,
-            "inputs": [
-                {
-                    "name": "_account",
-                    "type": "address"
-                },
-                {
-                    "name": "_registeredOn",
-                    "type": "string"
-                },
-                {
-                    "name": "_expiresOn",
-                    "type": "string"
-                },
-                {
-                    "name": "_hwid",
-                    "type": "string"
-                }
-            ],
-            "name": "giveLicense",
-            "outputs": [],
-            "payable": false,
-            "stateMutability": "nonpayable",
-            "type": "function"
-        },
-        {
-            "constant": false,
-            "inputs": [
-                {
-                    "name": "_from",
-                    "type": "address"
-                },
-                {
-                    "name": "_to",
-                    "type": "address"
-                },
-                {
-                    "name": "_license_number",
-                    "type": "uint256"
-                }
-            ],
-            "name": "transferFrom",
-            "outputs": [],
-            "payable": false,
-            "stateMutability": "nonpayable",
-            "type": "function"
-        },
-        {
-            "inputs": [],
-            "payable": false,
-            "stateMutability": "nonpayable",
-            "type": "constructor"
-        },
-        {
-            "anonymous": false,
-            "inputs": [
-                {
-                    "indexed": false,
-                    "name": "account",
-                    "type": "address"
-                },
-                {
-                    "indexed": false,
-                    "name": "licenseNumber",
-                    "type": "uint256"
-                }
-            ],
-            "name": "LicenseGiven",
-            "type": "event"
-        },
-        {
-            "anonymous": false,
-            "inputs": [
-                {
-                    "indexed": false,
-                    "name": "_from",
-                    "type": "address"
-                },
-                {
-                    "indexed": false,
-                    "name": "_to",
-                    "type": "address"
-                },
-                {
-                    "indexed": false,
-                    "name": "_licenseNumber",
-                    "type": "uint256"
-                }
-            ],
-            "name": "Transfer",
-            "type": "event"
-        },
-        {
-            "anonymous": false,
-            "inputs": [
-                {
-                    "indexed": false,
-                    "name": "admin",
-                    "type": "address"
-                },
-                {
-                    "indexed": false,
-                    "name": "approved",
-                    "type": "address"
-                },
-                {
-                    "indexed": false,
-                    "name": "licenseNumber",
-                    "type": "uint256"
-                }
-            ],
-            "name": "Approval",
-            "type": "event"
-        },
-        {
-            "constant": true,
-            "inputs": [
-                {
-                    "name": "_account",
-                    "type": "address"
-                }
-            ],
-            "name": "balanceOf",
-            "outputs": [
-                {
-                    "name": "balance",
-                    "type": "uint256"
-                }
-            ],
-            "payable": false,
-            "stateMutability": "view",
-            "type": "function"
-        },
-        {
-            "constant": true,
-            "inputs": [],
-            "name": "getAdminAddress",
-            "outputs": [
-                {
-                    "name": "",
-                    "type": "address"
-                }
-            ],
-            "payable": false,
-            "stateMutability": "view",
-            "type": "function"
-        },
-        {
-            "constant": true,
-            "inputs": [
-                {
-                    "name": "licenseNumber",
-                    "type": "uint256"
-                }
-            ],
-            "name": "getLicenseExpiresOnDate",
-            "outputs": [
-                {
-                    "name": "",
-                    "type": "string"
-                }
-            ],
-            "payable": false,
-            "stateMutability": "view",
-            "type": "function"
-        },
-        {
-            "constant": true,
-            "inputs": [
-                {
-                    "name": "licenseNumber",
-                    "type": "uint256"
-                }
-            ],
-            "name": "getLicenseHardwareId",
-            "outputs": [
-                {
-                    "name": "",
-                    "type": "string"
-                }
-            ],
-            "payable": false,
-            "stateMutability": "view",
-            "type": "function"
-        },
-        {
-            "constant": true,
-            "inputs": [
-                {
-                    "name": "licenseNumber",
-                    "type": "uint256"
-                }
-            ],
-            "name": "getLicenseRegisteredOnDate",
-            "outputs": [
-                {
-                    "name": "",
-                    "type": "string"
-                }
-            ],
-            "payable": false,
-            "stateMutability": "view",
-            "type": "function"
-        },
-        {
-            "constant": true,
-            "inputs": [
-                {
-                    "name": "",
-                    "type": "uint256"
-                }
-            ],
-            "name": "licenseNumberToClient",
-            "outputs": [
-                {
-                    "name": "",
-                    "type": "address"
-                }
-            ],
-            "payable": false,
-            "stateMutability": "view",
-            "type": "function"
-        },
-        {
-            "constant": true,
-            "inputs": [
-                {
-                    "name": "_license_number",
-                    "type": "uint256"
-                }
-            ],
-            "name": "ownerOf",
-            "outputs": [
-                {
-                    "name": "owner",
-                    "type": "address"
-                }
-            ],
-            "payable": false,
-            "stateMutability": "view",
-            "type": "function"
-        },
-        {
-            "constant": true,
-            "inputs": [],
-            "name": "totalLicenses",
-            "outputs": [
-                {
-                    "name": "total",
-                    "type": "uint256"
-                }
-            ],
-            "payable": false,
-            "stateMutability": "view",
-            "type": "function"
-        }
-    ];
+  var abi = LicenseToken.abi;
     
-  var myContract =await  new web3.eth.Contract(abi, '0xD07ABc94E4fC6c9830195284Dbf0754EA7f74993', {
+  var myContract =await  new web3.eth.Contract(abi, '0xbb43da193a65157c3f98be61c20978f225322ac6', {
       from: account, // default from address
       gasPrice: '20000000000' // default gas price in wei, 20 gwei in this case
     });
@@ -380,7 +112,7 @@ constructor(props) {
 }
 
 
-
+//Change Time To Human Readable Format
  convertTimestamp=(time) =>{
   var d = new Date(time * 1000), // Convert the passed timestamp to milliseconds
       yyyy = d.getFullYear(),
@@ -397,11 +129,11 @@ if (hh > 12) {
   } else if (hh === 12) {
       h = 12;
       ampm = 'PM';
-  } else if (hh == 0) {
+  } else if (hh === 0) {
       h = 12;
   }
 // ie: 2014-03-24, 3:00 PM
-  var time1 = yyyy + '-' + mm + '-' + dd + ', ' + h + ':' + min + ' ' + ampm;
+  let time1 = yyyy + '-' + mm + '-' + dd + ', ' + h + ':' + min + ' ' + ampm;
   return time1;
 };
 
@@ -440,10 +172,6 @@ if (hh > 12) {
 
 
 
-
-
-
-
   setAdminAddress= async () =>{
             let utils = this.state.web3.utils;
             let address = await this.state.contract.methods.getAdminAddress().call();
@@ -460,6 +188,53 @@ if (hh > 12) {
     await contract.methods.changeAdmin(newAddress).send({from : oldAddress});
     this.setAdminAddress();
   };
+  handleLicenseDetails=async(event)=>{
+    this.setState({queriedLicense:event.target.value});    
+  }
+  getLicenseDetails=async()=>{
+    let licenseNumber = parseInt(this.state.queriedLicense);  
+    console.log(licenseNumber);
+    let contract = await this.state.contract;
+try {
+  let OwnedBy = await contract.methods.licenseNumberToClient(licenseNumber).call();
+  let registeredOn = await contract.methods.getLicenseRegisteredOnDate(licenseNumber).call();
+    console.log(registeredOn);
+    let expiresOn = await contract.methods.getLicenseExpiresOnDate(licenseNumber).call();
+    console.log(expiresOn);
+    this.setState({OwnedBy,registeredOn,expiresOn});
+
+} catch (error) {
+  this.setState({OwnedBy : "License Not Found",registeredOn:"License Not Found",expiresOn:"License Not Found"});
+
+  
+}
+    //let OwnedBy =await contract.methods.licenseNumberToClient(licenseNumber).call();
+    
+
+  }
+  issueLicense= async()=>{
+    let contract = await this.state.contract;
+    let address = this.state.clientAddress.toString();
+    let hardwareid = this.state.hardwareid.toString();
+    let adminAddress = this.state.adminAddress;
+    // var date = (new Date());
+
+    var date = "Sat Feb 02 2019";
+    var newdate="Thu Feb 06 2020";
+
+    //var newdate=new Date((date.getFullYear() + 1),date.getMonth(),date.getDay());
+    console.log(newdate);
+    try {
+      console.log(address,date,newdate,hardwareid);
+      await contract.methods.giveLicense(address,date,newdate,hardwareid).send({from :adminAddress});
+      //console.log(licenseIssued);
+      alert("License Issued !");
+    } catch (error) {
+      console.log(error);
+      alert("Unable To Issue License !");
+    }
+  }
+ 
   render() {
     
 
@@ -688,7 +463,9 @@ if (hh > 12) {
 
                 </CardBody>
                 <CardFooter>
-                  <Button className="btn-fill" color="primary" type="submit">
+                  <Button className="btn-fill" color="primary" type="submit"
+                  onClick={this.issueLicense}
+                  >
                     Issue License
                   </Button>
                 </CardFooter>
@@ -705,9 +482,11 @@ if (hh > 12) {
                 </CardHeader>
                 <CardBody>
                   <FormGroup>
-                          <label>Select License Index : </label>
+                          <label>Selected License Index : {this.state.queriedLicense}</label>
                           <Input
-                             list="blic"
+                          type="text"
+                          value={this.state.queriedLicense}
+                          onChange={this.handleLicenseDetails}
                           />
                           <datalist id="blic">
                           <option value="1">1</option>
@@ -723,14 +502,16 @@ if (hh > 12) {
                     </FormGroup>
 
                     <ListGroup flush >
-                      <ListGroupItem className="text-primary">Owned By : //render address here</ListGroupItem>
-                      <ListGroupItem className="text-primary">Registered On : //render registered on date here</ListGroupItem>
-                      <ListGroupItem className="text-primary">Expires On: //render expires on data here</ListGroupItem>
+                      <ListGroupItem className="text-primary">Owned By : {this.state.OwnedBy}</ListGroupItem>
+                      <ListGroupItem className="text-primary">Registered On : {this.state.registeredOn}</ListGroupItem>
+                      <ListGroupItem className="text-primary">Expires On: {this.state.expiresOn}</ListGroupItem>
                     </ListGroup>
                       
                 </CardBody>
                 <CardFooter>
-                  <Button className="btn-fill" color="primary" type="submit">
+                  <Button className="btn-fill" color="primary" type="submit"
+                  onClick={this.getLicenseDetails}
+                  >
                     Fetch Details
                   </Button>
                 </CardFooter>

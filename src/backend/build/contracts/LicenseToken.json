@@ -1,25 +1,6 @@
 {
   "contractName": "LicenseToken",
-  "abi": [
-    {
-      "constant": true,
-      "inputs": [
-        {
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "name": "licenseNumberToClient",
-      "outputs": [
-        {
-          "name": "",
-          "type": "address"
-        }
-      ],
-      "payable": false,
-      "stateMutability": "view",
-      "type": "function"
-    },
+  "abi":[
     {
       "constant": false,
       "inputs": [
@@ -35,17 +16,51 @@
       "type": "function"
     },
     {
-      "constant": true,
-      "inputs": [],
-      "name": "getAdminAddress",
-      "outputs": [
+      "constant": false,
+      "inputs": [
         {
-          "name": "",
+          "name": "_account",
           "type": "address"
+        },
+        {
+          "name": "_registeredOn",
+          "type": "string"
+        },
+        {
+          "name": "_expiresOn",
+          "type": "string"
+        },
+        {
+          "name": "_hwid",
+          "type": "string"
         }
       ],
+      "name": "giveLicense",
+      "outputs": [],
       "payable": false,
-      "stateMutability": "view",
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "_from",
+          "type": "address"
+        },
+        {
+          "name": "_to",
+          "type": "address"
+        },
+        {
+          "name": "_license_number",
+          "type": "uint256"
+        }
+      ],
+      "name": "transferFrom",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
       "type": "function"
     },
     {
@@ -117,20 +132,6 @@
     },
     {
       "constant": true,
-      "inputs": [],
-      "name": "totalLicenses",
-      "outputs": [
-        {
-          "name": "total",
-          "type": "uint256"
-        }
-      ],
-      "payable": false,
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "constant": true,
       "inputs": [
         {
           "name": "_account",
@@ -150,16 +151,11 @@
     },
     {
       "constant": true,
-      "inputs": [
-        {
-          "name": "_license_number",
-          "type": "uint256"
-        }
-      ],
-      "name": "ownerOf",
+      "inputs": [],
+      "name": "getAdminAddress",
       "outputs": [
         {
-          "name": "owner",
+          "name": "",
           "type": "address"
         }
       ],
@@ -168,51 +164,22 @@
       "type": "function"
     },
     {
-      "constant": false,
+      "constant": true,
       "inputs": [
         {
-          "name": "_from",
-          "type": "address"
-        },
-        {
-          "name": "_to",
-          "type": "address"
-        },
-        {
-          "name": "_license_number",
+          "name": "licenseNumber",
           "type": "uint256"
         }
       ],
-      "name": "transferFrom",
-      "outputs": [],
-      "payable": false,
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "constant": false,
-      "inputs": [
+      "name": "getLicenseExpiresOnDate",
+      "outputs": [
         {
-          "name": "_account",
-          "type": "address"
-        },
-        {
-          "name": "_registeredOn",
-          "type": "string"
-        },
-        {
-          "name": "_expiresOn",
-          "type": "string"
-        },
-        {
-          "name": "_hwid",
+          "name": "",
           "type": "string"
         }
       ],
-      "name": "giveLicense",
-      "outputs": [],
       "payable": false,
-      "stateMutability": "nonpayable",
+      "stateMutability": "view",
       "type": "function"
     },
     {
@@ -257,15 +224,48 @@
       "constant": true,
       "inputs": [
         {
-          "name": "licenseNumber",
+          "name": "",
           "type": "uint256"
         }
       ],
-      "name": "getLicenseExpiresOnDate",
+      "name": "licenseNumberToClient",
       "outputs": [
         {
           "name": "",
-          "type": "string"
+          "type": "address"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "name": "_license_number",
+          "type": "uint256"
+        }
+      ],
+      "name": "ownerOf",
+      "outputs": [
+        {
+          "name": "owner",
+          "type": "address"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "totalLicenses",
+      "outputs": [
+        {
+          "name": "total",
+          "type": "uint256"
         }
       ],
       "payable": false,
