@@ -50,10 +50,7 @@ class Dashboard extends React.Component {
   hardwareid : null,
   clientAddress :null,
   contractAddress:null,
-  block:[null],
-  number:[null],
-  hash:[null],
-  time:[null],
+  transactionInfo:[],
   gas:null,
   queriedLicense:0,
   OwnedBy:null,
@@ -103,25 +100,25 @@ class Dashboard extends React.Component {
   this.setState({adminAddress: address,etherBalance:balance,contractAddress});
   var latestBlock = await this.state.web3.eth.getBlockNumber();
   console.log(latestBlock);
-  var hashes=[];
-  var timeOfBlocks=[];
+  var transactionInfo=[];
   var block = await this.state.web3.eth.getBlock(latestBlock);
-  var blocks=[]
-  for(let i=latestBlock;i>(latestBlock-6);i--){
+  for(let i=latestBlock;i>(latestBlock-12);i--){
+    var info = {};
     console.log(i);
     let curretnBlock = await block.hash.toString();
     let blockTime = await block.timestamp;
     blockTime=this.convertTimestamp(blockTime);
-      timeOfBlocks.push(blockTime);
-      blocks.push(i);
-      hashes.push(curretnBlock);
-      console.log(hashes);
-      console.log(timeOfBlocks);
+    info.block = i;
+    info.time = blockTime;
+    info.hash = curretnBlock;
+    transactionInfo.push(info);
+    console.log(transactionInfo);
+
+
   }
-  var hash = await block.hash.toString();
-  var time = await block.timestamp;
-  console.log(hash);
-    this.setState({block:blocks,hash:hashes,time:timeOfBlocks});
+console.log(transactionInfo);
+
+    this.setState({transactionInfo});
   return myContract;
   
 
@@ -662,9 +659,27 @@ try {
                       </tr>
                     </thead>
                     <tbody>
-                    {this.state.hash.map((blockNumber)=>{
+                    {this.state.transactionInfo.map((info)=>{
                         return(
-                          <h6>Will Render Results Here Later Maybe Monday !!</h6>
+                          <tr>
+                            <td>
+                              {info.block}
+                            </td>
+                            <td>
+                              {info.hash}
+                            </td>
+                            <td>
+                              {info.time}
+                            </td>
+                            <td>
+                              MACOS
+                            </td>
+                            <td>
+                        <Button className="btn-icon" color="success" size="sm">
+                    <i className="fa fa-check"></i>
+                </Button>{` `}
+                        </td>
+                          </tr>
                         )
                     })}
                       <tr>
