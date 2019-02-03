@@ -15,6 +15,7 @@ import LicenseToken from '../backend/build/contracts/LicenseToken.json';
 
 // reactstrap components
 import {
+  Alert,
   Button,
   ButtonGroup,
   Card,
@@ -30,6 +31,10 @@ import {
   Table,
   Row,
   Col,
+  Modal,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
 } from "reactstrap";
 
 // core components
@@ -45,15 +50,18 @@ class Dashboard extends React.Component {
   hardwareid : null,
   clientAddress :null,
   contractAddress:null,
-  block:null,
-  number:null,
-  hash:null,
-  time:null,
+  block:[null],
+  number:[null],
+  hash:[null],
+  time:[null],
   gas:null,
   queriedLicense:0,
   OwnedBy:null,
   registeredOn:null,
   expiresOn:null,
+  modal:false,
+  fromAddress:null,
+  toAddress:null,
 
  };
 
@@ -61,7 +69,8 @@ class Dashboard extends React.Component {
   componentDidMount = async()=>
   {
     let web3;
-    if (typeof web3 !== 'undefined') {
+    if (typeof web3 !== 'undefined') 
+    {
       web3 = await new Web3(web3.currentProvider);
       this.setState({web3});
     } else {
@@ -72,9 +81,10 @@ class Dashboard extends React.Component {
   
 //Let's Get Default Address 
   var account = web3.eth.accounts[0];
-    if (web3.eth.accounts[0] !== account) {
+    if (web3.eth.accounts[0] !== account) 
+    {
       account = web3.eth.accounts[0];
-           }
+    }
   var abi = LicenseToken.abi;
     
   var myContract =await  new web3.eth.Contract(abi, '0xbb43da193a65157c3f98be61c20978f225322ac6', {
@@ -93,22 +103,35 @@ class Dashboard extends React.Component {
   this.setState({adminAddress: address,etherBalance:balance,contractAddress});
   var latestBlock = await this.state.web3.eth.getBlockNumber();
   console.log(latestBlock);
+  var hashes=[];
+  var timeOfBlocks=[];
   var block = await this.state.web3.eth.getBlock(latestBlock);
+  var blocks=[]
+  for(let i=latestBlock;i>(latestBlock-6);i--){
+    console.log(i);
+    let curretnBlock = await block.hash.toString();
+    let blockTime = await block.timestamp;
+    blockTime=this.convertTimestamp(blockTime);
+      timeOfBlocks.push(blockTime);
+      blocks.push(i);
+      hashes.push(curretnBlock);
+      console.log(hashes);
+      console.log(timeOfBlocks);
+  }
   var hash = await block.hash.toString();
   var time = await block.timestamp;
   console.log(hash);
-    this.setState({block:latestBlock,hash:hash,time:this.convertTimestamp(time)});
+    this.setState({block:blocks,hash:hashes,time:timeOfBlocks});
   return myContract;
   
 
 
 };
 
-constructor(props) {
+constructor(props) 
+{
   super(props);
   console.log(LicenseToken.abi);
-  
-
 }
 
 
@@ -196,15 +219,16 @@ if (hh > 12) {
     console.log(licenseNumber);
     let contract = await this.state.contract;
 try {
+  let hardwareid = await contract.methods.getLicenseHardwareId(licenseNumber).call();
   let OwnedBy = await contract.methods.licenseNumberToClient(licenseNumber).call();
   let registeredOn = await contract.methods.getLicenseRegisteredOnDate(licenseNumber).call();
     console.log(registeredOn);
     let expiresOn = await contract.methods.getLicenseExpiresOnDate(licenseNumber).call();
     console.log(expiresOn);
-    this.setState({OwnedBy,registeredOn,expiresOn});
+    this.setState({OwnedBy,registeredOn,expiresOn,hardwareid});
 
 } catch (error) {
-  this.setState({OwnedBy : "License Not Found",registeredOn:"License Not Found",expiresOn:"License Not Found"});
+  this.setState({OwnedBy : "License Not Found",registeredOn:"License Not Found",expiresOn:"License Not Found",hardwareid:"License Not Found"});
 
   
 }
@@ -226,23 +250,69 @@ try {
     console.log(newdate);
     try {
       console.log(address,date,newdate,hardwareid);
-      await contract.methods.giveLicense(address,date,newdate,hardwareid).send({from :adminAddress});
+      console.log("Licesns : " ,contract.methods);
+      let res = await contract.methods.giveLicense(address,date,newdate,hardwareid).send({from :adminAddress,gas:4712388,gasPrice: 100000000000});
       //console.log(licenseIssued);
-      alert("License Issued !");
+      // alert("License Issued !");
+      console.log(res);
+      this.toggle();
+
     } catch (error) {
       console.log(error);
       alert("Unable To Issue License !");
     }
   }
- 
+  toggle=()=>{
+    this.setState({
+      modal: !this.state.modal
+    });
+  };
+ trasnferLicense=async()=>{
+   try {
+    let contract = await this.state.contract;
+    let adminAddress = this.state.adminAddress;
+    let _from = this.state.fromAddress;
+    let _to = this.state.toAddress;
+    let licenseNumber = this.state.queriedLicense;
+    
+
+    await contract.methods.transferFrom(_from,_to,licenseNumber).send({from :adminAddress,gas:4712388,gasPrice: 100000000000});
+     
+   } catch (error) {
+     console.log(error);
+   }
+ }
+ handleFromChange=async(event)=>{
+  this.setState({fromAddress:event.target.value})
+ }
+ handleToChange=async(event)=>{
+  this.setState({toAddress:event.target.value})
+
+ }
   render() {
     
 
     return (
+      
 
       <>
+           
         <div className="content">
+        <div>
+        {/* <Button color="danger" onClick={this.toggle}>{this.props.buttonLabel}</Button> */}
+        <Modal isOpen={this.state.modal} toggle={this.toggle} className={this.props.className}>
+          <ModalHeader toggle={this.toggle}>Licesne Issued Sucessfully</ModalHeader>
+          <ModalBody>
+            
+          </ModalBody>
+          <ModalFooter>
+            <Button color="primary" onClick={this.toggle}>Done</Button>{' '}
+            {/* <Button color="secondary" onClick={this.toggle}>Cancel</Button> */}
+          </ModalFooter>
+        </Modal>
+      </div>
           <Row>
+          
             <Col xs="12">
               <Card className="card-chart">
                 <CardHeader>
@@ -434,13 +504,16 @@ try {
             <Col lg="4">
             <Card className="card-chart">
                 <CardHeader>
+                
                   <h5 className="card-category">Give License Manually</h5>
                   <CardTitle tag="h3">
                     <i className="tim-icons icon-paper text-info" />{" "}
                     Allocate License
                   </CardTitle>
+                 
                 </CardHeader>
                 <CardBody>
+               
                   <FormGroup>
                           <label>Ethereum Address : {this.state.clientAddress}</label>
                           <Input
@@ -503,8 +576,11 @@ try {
 
                     <ListGroup flush >
                       <ListGroupItem className="text-primary">Owned By : {this.state.OwnedBy}</ListGroupItem>
+                      <ListGroupItem className="text-primary">Hardware Id : {this.state.hardwareid}</ListGroupItem>
+
                       <ListGroupItem className="text-primary">Registered On : {this.state.registeredOn}</ListGroupItem>
                       <ListGroupItem className="text-primary">Expires On: {this.state.expiresOn}</ListGroupItem>
+
                     </ListGroup>
                       
                 </CardBody>
@@ -533,27 +609,24 @@ try {
                   <FormGroup>
                           <label>Select License Number : </label>
                           <Input
-                             list="blic"
+                          type="text"
+                          value = {this.state.licenseNumber}
+                          onChange={this.trasnferLicense}
                           />
-                          <datalist id="blic">
-                          <option value="1">1</option>
-                          <option value="2">2</option>
-                          <option value="3">3</option>
-                          <option value="4">4</option>
-                          <option value="5">5</option>
-                          <option value="6">6</option>
-                          <option value="7">7</option>
-
-                          </datalist>
+                         
                           <label>Transfer From : </label>
                           <Input
                             placeholder="Ethereum Address"
                             type="text"
+                            value={this.state.fromAddress}
+                            onChange={this.handleFromChange}
                           />
                         <label>Transfer To : </label>
                           <Input
                             placeholder="Ethereum Address"
                             type="text"
+                            value={this.state.toAddress}
+                            onChange={this.handleToChange}
                           />
                     </FormGroup>
 
@@ -561,7 +634,9 @@ try {
                       
                 </CardBody>
                 <CardFooter>
-                  <Button className="btn-fill" color="primary" type="submit">
+                  <Button className="btn-fill" color="primary" type="submit"
+                  onClick={this.trasnferLicense}
+                  >
                   Make Transfer
                   </Button>
                 </CardFooter>
@@ -587,31 +662,11 @@ try {
                       </tr>
                     </thead>
                     <tbody>
-                      <tr>
-                        <td className="text-center">{this.state.block}</td>
-                        <td>
-                          <a className="primary" href={"https://etherscan.io/".concat(this.state.hash)}>{this.state.hash}</a>
-                        </td>
-                        <td>{this.state.time}</td>
-                        <td>Windows</td>
-                        <td>
-                        <Button className="btn-icon" color="success" size="sm">
-                    <i className="fa fa-check"></i>
-                </Button>{` `}
-                        </td>
-
-                      </tr>
-                      <tr>
-                        <td><a href="https://etherscan.io/address/0x47aAAAec10349835914182b57D6CB28a6725dEe2">0x47aAAAec10349835914182b57D6CB28a6725dEe2</a></td>
-                        <td><a href="https://etherscan.io/tx/0x3386137958829890bf5d0ad8351e2a2fec85648ab35a4debecdb678fe47ad51a">0x3386137958829890bf5d0ad8351e2a2fec85648ab35a4debecdb678fe47ad51a</a></td>
-                        <td>Auto Cad</td>
-                        <td className="text-center">Mac</td>
-                        <td>
-                        <Button className="btn-icon" color="success" size="sm">
-                    <i className="fa fa-check"></i>
-                </Button>{` `}
-                        </td>
-                      </tr>
+                    {this.state.hash.map((blockNumber)=>{
+                        return(
+                          <h6>Will Render Results Here Later Maybe Monday !!</h6>
+                        )
+                    })}
                       <tr>
                         <td>0x47aAAAec10349835914182b57D6CB28a6725dEe2</td>
                         <td>0x3386137958829890bf5d0ad8351e2a2fec85648ab35a4debecdb678fe47ad51a</td>
