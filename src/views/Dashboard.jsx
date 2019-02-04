@@ -65,8 +65,9 @@ class Dashboard extends React.Component {
   
   componentDidMount = async()=>
   {
+
     let web3;
-    if (typeof web3 !== 'undefined') 
+    if (typeof web3 != 'undefined') 
     {
       web3 = await new Web3(web3.currentProvider);
       this.setState({web3});
@@ -77,18 +78,16 @@ class Dashboard extends React.Component {
     }
   
 //Let's Get Default Address 
-  var account = web3.eth.accounts[0];
-    if (web3.eth.accounts[0] !== account) 
-    {
-      account = web3.eth.accounts[0];
-    }
+  var account = this.state.web3.eth.defaultAccount;
+  // console.log(account);
+
   var abi = LicenseToken.abi;
     
   var myContract =await  new web3.eth.Contract(abi, '0xbb43da193a65157c3f98be61c20978f225322ac6', {
       from: account, // default from address
       gasPrice: '20000000000' // default gas price in wei, 20 gwei in this case
     });
-  console.log(myContract);
+  // console.log(myContract);
   this.setState({contract : myContract});
  // resolve(myContract);
   let utils = this.state.web3.utils;
@@ -99,12 +98,14 @@ class Dashboard extends React.Component {
 
   this.setState({adminAddress: address,etherBalance:balance,contractAddress});
   var latestBlock = await this.state.web3.eth.getBlockNumber();
-  console.log(latestBlock);
+  // console.log(latestBlock);
   var transactionInfo=[];
-  var block = await this.state.web3.eth.getBlock(latestBlock);
   for(let i=latestBlock;i>(latestBlock-12);i--){
+    var block = await this.state.web3.eth.getBlock(i);
+
     var info = {};
-    console.log(i);
+    // console.log(i);
+
     let curretnBlock = await block.hash.toString();
     let blockTime = await block.timestamp;
     blockTime=this.convertTimestamp(blockTime);
@@ -112,11 +113,11 @@ class Dashboard extends React.Component {
     info.time = blockTime;
     info.hash = curretnBlock;
     transactionInfo.push(info);
-    console.log(transactionInfo);
+    // console.log(transactionInfo);
 
 
   }
-console.log(transactionInfo);
+// console.log(transactionInfo);
 
     this.setState({transactionInfo});
   return myContract;
@@ -213,15 +214,15 @@ if (hh > 12) {
   }
   getLicenseDetails=async()=>{
     let licenseNumber = parseInt(this.state.queriedLicense);  
-    console.log(licenseNumber);
+    // console.log(licenseNumber);
     let contract = await this.state.contract;
 try {
   let hardwareid = await contract.methods.getLicenseHardwareId(licenseNumber).call();
   let OwnedBy = await contract.methods.licenseNumberToClient(licenseNumber).call();
   let registeredOn = await contract.methods.getLicenseRegisteredOnDate(licenseNumber).call();
-    console.log(registeredOn);
+    // console.log(registeredOn);
     let expiresOn = await contract.methods.getLicenseExpiresOnDate(licenseNumber).call();
-    console.log(expiresOn);
+    // console.log(expiresOn);
     this.setState({OwnedBy,registeredOn,expiresOn,hardwareid});
 
 } catch (error) {
@@ -303,7 +304,7 @@ try {
             
           </ModalBody>
           <ModalFooter>
-            <Button color="primary" onClick={this.toggle}>Done</Button>{' '}
+            <Button color="secondary" onClick={this.toggle}>Done</Button>{' '}
             {/* <Button color="secondary" onClick={this.toggle}>Cancel</Button> */}
           </ModalFooter>
         </Modal>
@@ -417,14 +418,14 @@ try {
                 </CardHeader>
                 <CardBody>
                           <table responsive="true">
-                          <thead className="text-primary">
+                          <thead className="text-info">
                            <tr>
-                           <th className="badge badge-primary"> Smart Contract Details</th>
+                           <th className="badge badge-info"> Smart Contract Details</th>
                           
                            </tr>
                            <tr>
                             <td>
-                            <hr className="bg-primary"></hr>
+                            <hr className="bg-info"></hr>
 
                             </td>
                            </tr>
@@ -454,7 +455,7 @@ try {
                           </table>
                 </CardBody> 
                 <CardFooter>
-                  <Button className="btn-fill" color="primary" type="submit">
+                  <Button className="btn-fill" color="info" type="submit">
                     Change Address
                   </Button>
                 </CardFooter>
@@ -490,7 +491,7 @@ try {
                           </FormGroup>
                 </CardBody>
                 <CardFooter>
-                  <Button  className="align-self-center btn-fill" color="primary" type="submit"
+                  <Button  className="align-self-center btn-fill" color="info" type="submit"
                   onClick={this.handleSetNewAdminAddress}
                   >
                     Change Address
@@ -533,7 +534,7 @@ try {
 
                 </CardBody>
                 <CardFooter>
-                  <Button className="btn-fill" color="primary" type="submit"
+                  <Button className="btn-fill" color="info" type="submit"
                   onClick={this.issueLicense}
                   >
                     Issue License
@@ -572,17 +573,17 @@ try {
                     </FormGroup>
 
                     <ListGroup flush >
-                      <ListGroupItem className="text-primary">Owned By : {this.state.OwnedBy}</ListGroupItem>
-                      <ListGroupItem className="text-primary">Hardware Id : {this.state.hardwareid}</ListGroupItem>
+                      <ListGroupItem className="text-info">Owned By : {this.state.OwnedBy}</ListGroupItem>
+                      <ListGroupItem className="text-info">Hardware Id : {this.state.hardwareid}</ListGroupItem>
 
-                      <ListGroupItem className="text-primary">Registered On : {this.state.registeredOn}</ListGroupItem>
-                      <ListGroupItem className="text-primary">Expires On: {this.state.expiresOn}</ListGroupItem>
+                      <ListGroupItem className="text-info">Registered On : {this.state.registeredOn}</ListGroupItem>
+                      <ListGroupItem className="text-info">Expires On: {this.state.expiresOn}</ListGroupItem>
 
                     </ListGroup>
                       
                 </CardBody>
                 <CardFooter>
-                  <Button className="btn-fill" color="primary" type="submit"
+                  <Button className="btn-fill" color="info" type="submit"
                   onClick={this.getLicenseDetails}
                   >
                     Fetch Details
@@ -631,7 +632,7 @@ try {
                       
                 </CardBody>
                 <CardFooter>
-                  <Button className="btn-fill" color="primary" type="submit"
+                  <Button className="btn-fill" color="info" type="submit"
                   onClick={this.trasnferLicense}
                   >
                   Make Transfer
@@ -649,7 +650,7 @@ try {
                 </CardHeader>
                 <CardBody>
                   <Table className="tablesorter" responsive>
-                    <thead className="text-primary">
+                    <thead className="text-info">
                       <tr>
                         <th>Block Number</th>
                         <th>Transactino Hash</th>
@@ -660,13 +661,14 @@ try {
                     </thead>
                     <tbody>
                     {this.state.transactionInfo.map((info)=>{
+                      let link = "https://etherscan.io/tx/"+info.hash;
                         return(
                           <tr>
                             <td>
                               {info.block}
                             </td>
                             <td>
-                              {info.hash}
+                              <a href={link}>{info.hash}</a>
                             </td>
                             <td>
                               {info.time}
@@ -682,52 +684,7 @@ try {
                           </tr>
                         )
                     })}
-                      <tr>
-                        <td>0x47aAAAec10349835914182b57D6CB28a6725dEe2</td>
-                        <td>0x3386137958829890bf5d0ad8351e2a2fec85648ab35a4debecdb678fe47ad51a</td>
-                        <td>Android Studio</td>
-                        <td className="text-center">Linux</td>
-                        <td>
-                        <Button className="btn-icon" color="warning" size="sm">
-                    <i className="fa fa-spinner"></i>
-                </Button>{` `}
-                        </td>
-                      </tr>
-
-                      <tr>
-                        <td>0x47aAAAec10349835914182b57D6CB28a6725dEe2</td>
-                        <td>0x3386137958829890bf5d0ad8351e2a2fec85648ab35a4debecdb678fe47ad51a</td>
-                        <td>Photoshop</td>
-                        <td className="text-center">Windows</td>
-                        <td>
-                        <Button className="btn-icon" color="success" size="sm">
-                    <i className="fa fa-check"></i>
-                </Button>{` `}
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>0x47aAAAec10349835914182b57D6CB28a6725dEe2</td>
-                        <td>0x3386137958829890bf5d0ad8351e2a2fec85648ab35a4debecdb678fe47ad51a</td>
-                        <td>Auto Cad</td>
-                        <td className="text-center">Mac</td>
-                        <td>
-                        <Button className="btn-icon" color="success" size="sm">
-                    <i className="fa fa-check"></i>
-                </Button>{` `}
-                        </td>
-                      </tr>
-                      <tr>
-                        <td>0x47aAAAec10349835914182b57D6CB28a6725dEe2</td>
-                        <td>0x3386137958829890bf5d0ad8351e2a2fec85648ab35a4debecdb678fe47ad51a</td>
-                        <td>Android Studio</td>
-                        <td className="text-center">Linux</td>
-                        <td>
-                        <Button className="btn-icon" color="warning" size="sm">
-                    <i className="fa fa-spinner"></i>
-                </Button>{` `}
-                        </td>
-                      </tr>
-                    </tbody>
+                     </tbody>
                   </Table>
                 </CardBody>
               </Card>

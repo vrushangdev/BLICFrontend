@@ -15,18 +15,13 @@ class Footer extends React.Component {
             <NavItem>
               <NavLink href="https://github.com/vrushangdev">Blockchain Licenses</NavLink>
             </NavItem>
-            <NavItem>
-              <NavLink href="javascript:void(0)">About Us</NavLink>
-            </NavItem>
-            <NavItem>
-              <NavLink href="javascript:void(0)">Blog</NavLink>
-            </NavItem>
+           
           </Nav>
           <div className="copyright">
             © {new Date().getFullYear()} made with{" "}
             <i className="tim-icons icon-heart-2" /> by{" "}
             <a
-              href="https://github.com/vrushangdev"
+              href="https://github.com/vrushangdev/"
               rel="noopener noreferrer"
               target="_blank"
             >
