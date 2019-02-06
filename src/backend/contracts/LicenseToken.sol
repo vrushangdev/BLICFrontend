@@ -38,7 +38,7 @@ contract LicenseToken is Admin {
 
 //Now Building Proper Data Type To Store All The Attribute's Of Each License .
   struct LicenseAttributes {
-
+    
     string registeredOn;
     string expiresOn;
     string device_hardware_id;
@@ -67,7 +67,8 @@ constructor() public {
 //started to implement basic function's
 //this function will return us total number of licenses
 
-  function totalLicenses() public view returns (uint256 total) {
+  function totalLicenses() public view returns (uint256) {
+      
     return license.length;
   }
   //balanceof will return us total eth balance availaible in given eth address
@@ -119,7 +120,6 @@ function getLicenseExpiresOnDate(uint licenseNumber) public view returns(string 
 
   return license[licenseNumber].expiresOn;
 }
-
 
   //Internal Private Methods
   function _owns(uint _licenseId) internal view returns (address) {

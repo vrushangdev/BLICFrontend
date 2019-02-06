@@ -59,6 +59,8 @@ class Dashboard extends React.Component {
   modal:false,
   fromAddress:null,
   toAddress:null,
+  totalLicenses:null,
+  licenseNumber:null,
 
  };
 
@@ -83,7 +85,7 @@ class Dashboard extends React.Component {
 
   var abi = LicenseToken.abi;
     
-  var myContract =await  new web3.eth.Contract(abi, '0xbb43da193a65157c3f98be61c20978f225322ac6', {
+  var myContract =await  new web3.eth.Contract(abi, '0x9C2Dd82c19fE105015c9DeF4737e2bF8e25Bb0d6', {
       from: account, // default from address
       gasPrice: '20000000000' // default gas price in wei, 20 gwei in this case
     });
@@ -98,7 +100,9 @@ class Dashboard extends React.Component {
 
   this.setState({adminAddress: address,etherBalance:balance,contractAddress});
   var latestBlock = await this.state.web3.eth.getBlockNumber();
-  // console.log(latestBlock);
+  let totalLicenses = await this.state.contract.methods.totalLicenses().call();
+this.setState({totalLicenses});
+  console.log(latestBlock);
   var transactionInfo=[];
   for(let i=latestBlock;i>(latestBlock-12);i--){
     var block = await this.state.web3.eth.getBlock(i);
@@ -271,7 +275,7 @@ try {
     let adminAddress = this.state.adminAddress;
     let _from = this.state.fromAddress;
     let _to = this.state.toAddress;
-    let licenseNumber = this.state.queriedLicense;
+    let licenseNumber = parseInt(this.state.queriedLicense);
     
 
     await contract.methods.transferFrom(_from,_to,licenseNumber).send({from :adminAddress,gas:4712388,gasPrice: 100000000000});
@@ -448,15 +452,17 @@ try {
                             </tr>
                             <tr>
                               <td>Total Licenses </td>
-                              <td>50</td>
+                              <td>{this.state.totalLicenses}</td>
                             </tr>
                           </tbody>
 
                           </table>
                 </CardBody> 
                 <CardFooter>
-                  <Button className="btn-fill" color="info" type="submit">
-                    Change Address
+                  <Button className="btn-fill" color="info" type="submit"
+                  onClick={()=>{window.location.reload()}}
+                  >
+                    Reload
                   </Button>
                 </CardFooter>
               </Card>
@@ -520,7 +526,7 @@ try {
                             value={this.state.value}
                             onChange={this.handleClientAddress}
                           />
-                          <label>Hardware Id:{this.state.hardwareid} </label>
+                          <label>Hardware Id: </label>
                           <Input
                           placeholder="User Hardware Id"
                           type="text"
@@ -608,7 +614,7 @@ try {
                           <label>Select License Number : </label>
                           <Input
                           type="text"
-                          value = {this.state.licenseNumber}
+                          value = {this.state.queriedLicense}
                           onChange={this.trasnferLicense}
                           />
                          
