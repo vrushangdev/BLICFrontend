@@ -5,6 +5,8 @@ import classNames from "classnames";
 import { Line } from "react-chartjs-2";
 import Web3 from 'web3';
 import LicenseToken from '../backend/build/contracts/LicenseToken.json';
+import ReactChartkick, { LineChart, PieChart } from 'react-chartkick'
+import Chart from 'chart.js'
 
 
 // DropdownToggle,
@@ -61,11 +63,12 @@ class Dashboard extends React.Component {
   toAddress:null,
   totalLicenses:null,
   licenseNumber:null,
+  data:null,
 
  };
 
   
-  componentDidMount = async()=>
+  componentWillMount = async()=>
   {
 
     let web3;
@@ -121,7 +124,19 @@ this.setState({totalLicenses});
 
 
   }
-// console.log(transactionInfo);
+ 
+  var data={}
+  // let totalLicenses = await this.state.contract.methods.totalLicenses().call();
+
+  for(let j=0;j<totalLicenses;j++){
+   let curr_date = await this.state.contract.methods.getLicenseRegisteredOnDate(j).call();
+   data[curr_date] = (data[curr_date] || 0) + 1;
+
+  }
+   
+  console.log(data);
+  this.setState({data});
+  ReactChartkick.addAdapter(Chart)
 
     this.setState({transactionInfo});
   return myContract;
@@ -168,10 +183,8 @@ if (hh > 12) {
 
 
   //Here Goes All Data For Required Component's 
-  setBgChartData = name => {
-    this.setState({
-      bigChartData: name
-    });
+  setBgChartData = async() => {
+    
   };
  handleChange = (event)=>{
   this.setState({newAdminAddress: event.target.value});
@@ -245,8 +258,10 @@ try {
     let adminAddress = this.state.adminAddress;
     // var date = (new Date());
 
-    var date = "Sat Feb 02 2019";
-    var newdate="Thu Feb 06 2020";
+    var date = (new Date());
+    var newdate=new Date((date.getFullYear() + 1),date.getMonth(),date.getDay());
+    date = date.toString()
+    newdate = newdate.toString()
 
     //var newdate=new Date((date.getFullYear() + 1),date.getMonth(),date.getDay());
     console.log(newdate);
@@ -273,7 +288,7 @@ try {
    try {
     let contract = await this.state.contract;
     let adminAddress = this.state.adminAddress;
-    let _from = this.state.fromAddress;
+    let _from = this.state.OwnedBy;
     let _to = this.state.toAddress;
     let licenseNumber = parseInt(this.state.queriedLicense);
     
@@ -330,13 +345,11 @@ try {
                       >
                         <Button
                           tag="label"
-                          className={classNames("btn-simple", {
-                            active: this.state.bigChartData === "data1"
-                          })}
+                          className={classNames("btn-simple active")}
                           color="info"
                           id="0"
                           size="sm"
-                          onClick={() => this.setBgChartData("data1")}
+                          onClick={() => this.setBgChartData()}
                         >
                           <input
                             defaultChecked
@@ -345,65 +358,20 @@ try {
                             type="radio"
                           />
                           <span className="d-none d-sm-block d-md-block d-lg-block d-xl-block">
-                            Windows
+                            MACOS
                           </span>
                           <span className="d-block d-sm-none">
                             <i className="tim-icons icon-single-02" />
                           </span>
                         </Button>
-                        <Button
-                          color="info"
-                          id="1"
-                          size="sm"
-                          tag="label"
-                          className={classNames("btn-simple", {
-                            active: this.state.bigChartData === "data2"
-                          })}
-                          onClick={() => this.setBgChartData("data2")}
-                        >
-                          <input
-                            className="d-none"
-                            name="options"
-                            type="radio"
-                          />
-                          <span className="d-none d-sm-block d-md-block d-lg-block d-xl-block">
-                            MacOs
-                          </span>
-                          <span className="d-block d-sm-none">
-                            <i className="tim-icons icon-gift-2" />
-                          </span>
-                        </Button>
-                        <Button
-                          color="info"
-                          id="2"
-                          size="sm"
-                          tag="label"
-                          className={classNames("btn-simple", {
-                            active: this.state.bigChartData === "data3"
-                          })}
-                          onClick={() => this.setBgChartData("data3")}
-                        >
-                          <input
-                            className="d-none"
-                            name="options"
-                            type="radio"
-                          />
-                          <span className="d-none d-sm-block d-md-block d-lg-block d-xl-block">
-                            Linux
-                          </span>
-                          <span className="d-block d-sm-none">
-                            <i className="tim-icons icon-tap-02" />
-                          </span>
-                        </Button>
-                      </ButtonGroup>
+                         </ButtonGroup>
                     </Col>
                   </Row>
                 </CardHeader>
                 <CardBody>
                   <div className="chart-area">
-                    <Line
-                      data={chartExample1[this.state.bigChartData]}
-                      options={chartExample1.options}
+                    <LineChart
+                    data={this.state.data}
                     />
                   </div>
                 </CardBody>
@@ -448,7 +416,7 @@ try {
                               <td>Owner 
 
                               </td>
-                              <td>0x47aAAAec10349835914182b57D6CB28a6725dEe2</td>
+                              <td>{this.state.adminAddress}</td>
                             </tr>
                             <tr>
                               <td>Total Licenses </td>
@@ -565,16 +533,7 @@ try {
                           value={this.state.queriedLicense}
                           onChange={this.handleLicenseDetails}
                           />
-                          <datalist id="blic">
-                          <option value="1">1</option>
-                          <option value="2">2</option>
-                          <option value="3">3</option>
-                          <option value="4">4</option>
-                          <option value="5">5</option>
-                          <option value="6">6</option>
-                          <option value="7">7</option>
-
-                          </datalist>
+                         
 
                     </FormGroup>
 
@@ -622,7 +581,7 @@ try {
                           <Input
                             placeholder="Ethereum Address"
                             type="text"
-                            value={this.state.fromAddress}
+                            value={this.state.OwnedBy}
                             onChange={this.handleFromChange}
                           />
                         <label>Transfer To : </label>
@@ -661,7 +620,7 @@ try {
                         <th>Block Number</th>
                         <th>Transactino Hash</th>
                         <th>Time</th>
-                        <th className="text-center">License Type</th>
+                        <th className="text-center">Network</th>
                         <th>Status</th>
                       </tr>
                     </thead>
@@ -680,7 +639,7 @@ try {
                               {info.time}
                             </td>
                             <td>
-                              MACOS
+                              Ganache
                             </td>
                             <td>
                         <Button className="btn-icon" color="success" size="sm">
