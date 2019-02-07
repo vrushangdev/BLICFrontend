@@ -88,7 +88,7 @@ class Dashboard extends React.Component {
 
   var abi = LicenseToken.abi;
     
-  var myContract =await  new web3.eth.Contract(abi, '0x9C2Dd82c19fE105015c9DeF4737e2bF8e25Bb0d6', {
+  var myContract =await  new web3.eth.Contract(abi, '0xcF3E24aC11a9CE619a7273ce59706Bf8bd4eE974', {
       from: account, // default from address
       gasPrice: '20000000000' // default gas price in wei, 20 gwei in this case
     });
@@ -358,7 +358,7 @@ try {
                             type="radio"
                           />
                           <span className="d-none d-sm-block d-md-block d-lg-block d-xl-block">
-                            MACOS
+                            Total Licenses
                           </span>
                           <span className="d-block d-sm-none">
                             <i className="tim-icons icon-single-02" />
