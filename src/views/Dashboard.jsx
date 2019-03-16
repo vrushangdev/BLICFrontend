@@ -85,7 +85,7 @@ class Dashboard extends React.Component {
 
   var abi = LicenseToken.abi;
     
-  var myContract =await  new web3.eth.Contract(abi, '0x9C2Dd82c19fE105015c9DeF4737e2bF8e25Bb0d6', {
+  var myContract =await  new web3.eth.Contract(abi, '0x0a894432e3c032900e0f4c4a31ad07a2dc4056d9', {
       from: account, // default from address
       gasPrice: '20000000000' // default gas price in wei, 20 gwei in this case
     });
@@ -575,6 +575,7 @@ try {
                           <option value="7">7</option>
 
                           </datalist>
+
 
                     </FormGroup>
 
